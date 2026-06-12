@@ -7,8 +7,8 @@
 <style>
 :root{
   --ink:#172033; --muted:#667085; --blue:#2f6bff; --cyan:#72d7ff;
-  --bg:#f5f9ff; --card:rgba(255,255,255,.86); --line:rgba(135,158,205,.22);
-  --shadow:0 18px 46px rgba(31,77,150,.12); --radius:28px;
+  --card:rgba(255,255,255,.88); --line:rgba(135,158,205,.22);
+  --shadow:0 18px 46px rgba(31,77,150,.12);
 }
 *{box-sizing:border-box}
 body{
@@ -28,22 +28,55 @@ body{
 h1{font-size:38px;line-height:1.05;margin:16px 0 10px;letter-spacing:-.8px}
 h2{font-size:22px;margin:0 0 14px}
 p{color:var(--muted);line-height:1.6;margin:0}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  min-height:48px;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:900;
-  background:linear-gradient(135deg,var(--blue),var(--cyan)); color:white;
-  box-shadow:0 12px 28px rgba(47,107,255,.22);
+.primary-cta{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  margin-top:18px;
 }
-.btn.secondary{background:linear-gradient(135deg,#fff,#eff6ff);color:#2457d6;border:1px solid rgba(47,107,255,.16)}
+@media(min-width:760px){.primary-cta{grid-template-columns:1.1fr .9fr}}
+.cta-main,.cta-sub{
+  text-decoration:none;
+  border-radius:28px;
+  padding:18px;
+  border:1px solid rgba(47,107,255,.16);
+  display:block;
+}
+.cta-main{
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  box-shadow:0 12px 28px rgba(47,107,255,.20);
+}
+.cta-sub{
+  color:var(--ink);
+  background:linear-gradient(135deg,#fff,#f4f8ff);
+}
+.cta-main b,.cta-sub b{display:block;font-size:20px;margin-bottom:6px}
+.cta-main span{color:rgba(255,255,255,.88);line-height:1.45}
+.cta-sub span{color:var(--muted);line-height:1.45}
+.contact-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.contact-row a{
+  text-decoration:none;
+  color:#2457d6;
+  background:rgba(255,255,255,.70);
+  border:1px solid rgba(47,107,255,.14);
+  border-radius:999px;
+  padding:11px 14px;
+  font-weight:900;
+}
 .grid{display:grid;gap:14px}
-@media(min-width:760px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:760px){.grid.three{grid-template-columns:repeat(3,1fr)}}
 .car{
   border:1px solid var(--line);border-radius:26px;padding:18px;background:linear-gradient(135deg,#fff,#f4f8ff);
 }
 .car .image{
   height:150px;border-radius:22px;background:linear-gradient(135deg,#dbeafe,#ffffff);
-  display:flex;align-items:center;justify-content:center;color:#2457d6;font-weight:900;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;color:#2457d6;font-weight:900;margin-bottom:14px;text-align:center;
 }
 .tag{display:inline-flex;padding:7px 10px;border-radius:999px;background:rgba(47,107,255,.08);color:#2457d6;font-size:12px;font-weight:800;margin:4px 6px 0 0}
 .item{padding:11px 0;border-top:1px solid rgba(135,158,205,.16);line-height:1.5}
@@ -57,10 +90,23 @@ p{color:var(--muted);line-height:1.6;margin:0}
     <span class="kicker">🚗 Hatyai Car Rental</span>
     <h1>กอกอล์ รถเช่าหาดใหญ่ 🩵</h1>
     <p>บริการรถเช่าหาดใหญ่ ขับง่าย ประหยัดน้ำมัน เหมาะสำหรับเที่ยว ทำงาน รับ-ส่งสนามบิน และเดินทางในเมือง</p>
-    <div class="actions">
-      <a class="btn" href="https://line.me/R/ti/p/@540snozl">จองผ่าน LINE @540snozl</a>
-      <a class="btn secondary" href="tel:0949844525">โทร 094-984-4525</a>
+
+    <div class="primary-cta">
+      <a class="cta-main" href="booking.html">
+        <b>📝 จองด้วยตัวเองทันที</b>
+        <span>กรอกข้อมูลวันรับ-คืนรถ รุ่นที่สนใจ และช่องทางติดต่อ</span>
+      </a>
+      <a class="cta-sub" href="availability.html">
+        <b>🔍 เช็ครถว่าง</b>
+        <span>ดูสถานะรถเบื้องต้นก่อนส่งคำขอจอง</span>
+      </a>
     </div>
+
+    <div class="contact-row">
+      <a href="https://line.me/R/ti/p/@540snozl">LINE @540snozl</a>
+      <a href="tel:0949844525">โทร 094-984-4525</a>
+    </div>
+
     <div style="margin-top:16px">
       <span class="tag">Yaris Ativ</span><span class="tag">หาดใหญ่</span><span class="tag">K&K รถเช่าหาดใหญ่</span>
     </div>
@@ -80,8 +126,8 @@ p{color:var(--muted);line-height:1.6;margin:0}
   <section class="card">
     <h2>📋 ขั้นตอนการเช่า</h2>
     <div class="item">1. เลือกรุ่นรถและวันที่ต้องการใช้งาน</div>
-    <div class="item">2. ติดต่อผ่าน LINE หรือโทรเพื่อเช็กคิวรถว่าง</div>
-    <div class="item">3. ส่งเอกสารและยืนยันการจอง</div>
+    <div class="item">2. เช็ครถว่างเบื้องต้น หรือกรอกคำขอจองได้เลย</div>
+    <div class="item">3. ทีมงานตรวจสอบคิวรถและติดต่อกลับเพื่อยืนยัน</div>
     <div class="item">4. รับรถตามจุดนัดหมาย / สนามบิน / ตัวเมืองหาดใหญ่</div>
   </section>
 
@@ -99,10 +145,6 @@ p{color:var(--muted);line-height:1.6;margin:0}
     <div class="item"><b>LINE:</b> @540snozl</div>
     <div class="item"><b>Tel:</b> 094-984-4525</div>
     <div class="item"><b>Facebook:</b> K&K รถเช่าหาดใหญ่</div>
-    <div class="actions">
-      <a class="btn" href="https://line.me/R/ti/p/@540snozl">จองผ่าน LINE</a>
-      <a class="btn secondary" href="tel:0949844525">โทรเลย</a>
-    </div>
   </section>
 
   <div class="footer">K&K รถเช่าหาดใหญ่ · Designed for mobile booking</div>
