@@ -23,11 +23,12 @@ textarea{min-height:100px;resize:vertical}
 .btn:disabled{opacity:.65;cursor:not-allowed}
 .back{display:inline-block;text-decoration:none;color:#2457d6;font-weight:900;margin-bottom:12px}
 .note{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.5}
+.status{margin-top:12px;font-size:14px;font-weight:800;color:#2457d6;line-height:1.5}
+.error{color:#d92d20}
 .summary{white-space:pre-wrap;background:#f6f9ff;border:1px dashed rgba(47,107,255,.28);padding:14px;border-radius:18px;color:#344054;font-size:14px;line-height:1.5}
 .actions{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
 @media(min-width:720px){.actions{grid-template-columns:1fr 1fr}}
 .linkbtn{text-align:center;text-decoration:none;border-radius:999px;padding:13px 16px;font-weight:900;background:linear-gradient(135deg,#fff,#eff6ff);color:#2457d6;border:1px solid rgba(47,107,255,.16)}
-.status{margin-top:12px;font-size:14px;font-weight:800;color:#2457d6}
 </style>
 </head>
 <body>
@@ -105,6 +106,26 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzzxc5SW0S4l0V-k4m9
 const params = new URLSearchParams(window.location.search);
 
 function el(id){ return document.getElementById(id); }
+function toDate(value){ return new Date(value + "T00:00:00"); }
+
+function validateDates(showAlert = true){
+  const pickupDate = el("pickupDate").value;
+  const returnDate = el("returnDate").value;
+  const status = el("statusText");
+
+  status.classList.remove("error");
+  status.textContent = "";
+
+  if(!pickupDate || !returnDate) return false;
+
+  if(toDate(returnDate) < toDate(pickupDate)){
+    status.classList.add("error");
+    status.textContent = "วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ";
+    if(showAlert) alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ");
+    return false;
+  }
+  return true;
+}
 
 window.addEventListener("DOMContentLoaded", () => {
   const selectedCar = params.get("car");
@@ -125,27 +146,25 @@ window.addEventListener("DOMContentLoaded", () => {
       select.add(option);
     }
   }
+
   if(selectedPickup) el("pickupDate").value = selectedPickup;
   if(selectedReturn) el("returnDate").value = selectedReturn;
+
+  el("pickupDate").addEventListener("change", () => validateDates(false));
+  el("returnDate").addEventListener("change", () => validateDates(false));
 });
 
 el("bookingForm").addEventListener("submit", async function(event){
   event.preventDefault();
 
-  const pickupDate = el("pickupDate").value;
-  const returnDate = el("returnDate").value;
-
-  if(returnDate < pickupDate){
-    alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ");
-    return;
-  }
+  if(!validateDates(true)) return;
 
   const data = {
     name: el("customerName").value.trim(),
     phone: el("phone").value.trim(),
     lineid: el("lineid").value.trim(),
-    pickupDate,
-    returnDate,
+    pickupDate: el("pickupDate").value,
+    returnDate: el("returnDate").value,
     pickupTime: el("pickupTime").value,
     returnTime: el("returnTime").value,
     car: el("car").value,
@@ -180,6 +199,7 @@ LINE ID: ${data.lineid || "-"}
   const submitBtn = el("submitBtn");
   submitBtn.disabled = true;
   submitBtn.textContent = "กำลังบันทึกข้อมูล...";
+  el("statusText").classList.remove("error");
   el("statusText").textContent = "กำลังส่งข้อมูลเข้า Google Sheet...";
 
   try {
@@ -193,10 +213,11 @@ LINE ID: ${data.lineid || "-"}
     el("statusText").textContent = "บันทึกข้อมูลแล้ว กำลังเปิด LINE...";
     setTimeout(() => {
       window.location.href = lineUrl;
-    }, 500);
+    }, 700);
 
   } catch (error) {
     console.error(error);
+    el("statusText").classList.add("error");
     el("statusText").textContent = "ส่งข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง หรือกดเปิด LINE ด้านล่าง";
     submitBtn.disabled = false;
     submitBtn.textContent = "ส่งข้อมูลการจอง";
