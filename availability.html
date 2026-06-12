@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>เช็ครถว่าง | กอกอล์ รถเช่าหาดใหญ่</title>
 <style>
-:root{--ink:#172033;--muted:#667085;--blue:#2f6bff;--cyan:#72d7ff;--card:rgba(255,255,255,.88);--line:rgba(135,158,205,.24);--shadow:0 18px 46px rgba(31,77,150,.12);--green:#12b76a;--red:#f04438}
+:root{--ink:#172033;--muted:#667085;--blue:#2f6bff;--cyan:#72d7ff;--card:rgba(255,255,255,.88);--line:rgba(135,158,205,.24);--shadow:0 18px 46px rgba(31,77,150,.12);--green:#12b76a;--red:#f04438;--yellow:#f79009}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 8%,rgba(114,215,255,.36),transparent 30%),radial-gradient(circle at 90% 0%,rgba(47,107,255,.20),transparent 35%),linear-gradient(180deg,#eef6ff 0%,#ffffff 100%);padding:18px}
 .wrap{max-width:880px;margin:auto}.hero,.card{background:var(--card);border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px;margin:14px 0}
@@ -17,21 +17,24 @@ label{display:block;font-weight:800;margin:14px 0 7px}input{width:100%;border:1p
 .back{display:inline-block;text-decoration:none;color:#2457d6;font-weight:900;margin-bottom:12px}.grid{display:grid;gap:12px}
 .car{background:linear-gradient(135deg,#fff,#f5f9ff);border:1px solid rgba(135,158,205,.22);border-radius:24px;padding:16px}
 .carTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.status{padding:7px 10px;border-radius:999px;font-weight:900;font-size:13px;white-space:nowrap}
-.available{background:rgba(18,183,106,.12);color:var(--green)}.unavailable{background:rgba(240,68,56,.12);color:var(--red)}
+.available{background:rgba(18,183,106,.12);color:var(--green)}.unavailable{background:rgba(240,68,56,.12);color:var(--red)}.ask{background:rgba(247,144,9,.14);color:var(--yellow)}
 .small{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5}
 .actions{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}@media(min-width:760px){.actions{grid-template-columns:repeat(3,1fr)}}
-.linkbtn{display:flex;align-items:center;justify-content:center;min-height:64px;text-align:center;text-decoration:none;border-radius:24px;padding:16px;font-weight:900;line-height:1.25;color:#2457d6;background:linear-gradient(135deg,#ffffff,#eff6ff);border:1px solid rgba(47,107,255,.16);box-shadow:0 10px 24px rgba(31,77,150,.08)}
+.linkbtn{display:flex;align-items:center;justify-content:center;min-height:54px;text-align:center;text-decoration:none;border-radius:22px;padding:14px;font-weight:900;line-height:1.25;color:#2457d6;background:linear-gradient(135deg,#ffffff,#eff6ff);border:1px solid rgba(47,107,255,.16);box-shadow:0 10px 24px rgba(31,77,150,.08)}
 .linkbtn.primary{color:white;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 12px 28px rgba(47,107,255,.22)}
+.loading{color:var(--muted);font-size:14px;line-height:1.5}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="index.html">← กลับหน้าแรก</a>
+
   <section class="hero">
     <span class="kicker">📅 Availability Check</span>
     <h1>เช็ครถว่าง 🚗</h1>
-    <p>เลือกวันรับ-คืนรถเพื่อดูสถานะเบื้องต้น แล้วกดส่งคำขอจองเพื่อให้ทีมงานคอนเฟิร์มอีกครั้ง</p>
+    <p>เลือกวันรับ-คืนรถ ระบบจะอ่านข้อมูลจาก Google Sheet แล้วแสดงรถที่ว่าง พร้อมปุ่มจองรถคันนั้น</p>
   </section>
+
   <section class="card">
     <h2>เลือกวันที่ต้องการเช่า</h2>
     <div class="row two">
@@ -39,44 +42,130 @@ label{display:block;font-weight:800;margin:14px 0 7px}input{width:100%;border:1p
       <div><label>วันที่คืนรถ</label><input id="endDate" type="date"></div>
     </div>
     <button class="btn" onclick="checkAvailability()">🔍 ตรวจสอบคิวรถ</button>
-    <div class="small">หมายเหตุ: หน้านี้เป็นสถานะเบื้องต้น คิวรถจริงต้องรอทีมงานยืนยันอีกครั้ง</div>
+    <div class="small" id="sheetStatus">กำลังโหลดข้อมูลรถจาก Google Sheet...</div>
   </section>
+
   <section class="card" id="resultCard" style="display:none">
-    <h2>ผลการเช็ค</h2><div class="grid" id="results"></div>
+    <h2>ผลการเช็ค</h2>
+    <div class="grid" id="results"></div>
   </section>
+
   <section class="card">
-    <h2>ขั้นตอนถัดไป</h2>
+    <h2>ติดต่อโดยตรง</h2>
     <div class="actions">
-      <a class="linkbtn primary" href="booking.html">📝<br>ส่งคำขอจอง</a>
+      <a class="linkbtn" href="booking.html">📝 ส่งคำขอจอง</a>
       <a class="linkbtn" href="https://line.me/R/ti/p/@540snozl">LINE<br>@540snozl</a>
       <a class="linkbtn" href="tel:0949844525">โทร<br>094-984-4525</a>
     </div>
   </section>
 </div>
+
 <script>
-const cars=[
-{id:"ativ2017",name:"Yaris Ativ 2017",note:"ขับง่าย ประหยัดน้ำมัน",blocked:[]},
-{id:"ativ2019",name:"Yaris Ativ 2019",note:"คล่องตัว เหมาะใช้งานในเมือง",blocked:[]},
-{id:"ativ2021",name:"Yaris Ativ 2021",note:"นั่งสบาย เดินทางสะดวก",blocked:[]},
-{id:"ativ2022",name:"Yaris Ativ 2022",note:"รุ่นใหม่ขึ้น ภาพลักษณ์ดี",blocked:[]},
-{id:"yaris2025",name:"Yaris All New 2025",note:"รุ่นใหม่ เหมาะกับทริปและงานธุรกิจ",blocked:[]}
-];
-function toDate(s){return new Date(s+"T00:00:00")}
-function overlap(start,end,bStart,bEnd){return toDate(start)<=toDate(bEnd)&&toDate(end)>=toDate(bStart)}
-function checkAvailability(){
- const start=document.getElementById("startDate").value,end=document.getElementById("endDate").value,results=document.getElementById("results");
- if(!start||!end){alert("เลือกวันที่รับรถและวันที่คืนรถก่อนนะคะ");return}
- if(toDate(end)<toDate(start)){alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ");return}
- results.innerHTML="";
- cars.forEach(car=>{
-  const isBlocked=car.blocked.some(range=>overlap(start,end,range[0],range[1]));
-  const div=document.createElement("div");div.className="car";
-  div.innerHTML=`<div class="carTop"><div><b>${car.name}</b><div class="small">${car.note}</div><div class="small">${isBlocked?"รุ่นนี้อาจไม่ว่างในช่วงวันที่เลือก แนะนำสอบถามรุ่นใกล้เคียงผ่าน LINE":"สามารถส่งคำขอจองเพื่อให้ทีมงานคอนเฟิร์มได้"}</div></div><span class="status ${isBlocked?"unavailable":"available"}">${isBlocked?"ไม่ว่าง":"น่าจะว่าง"}</span></div>`;
-  results.appendChild(div);
- });
- document.getElementById("resultCard").style.display="block";
- document.getElementById("resultCard").scrollIntoView({behavior:"smooth"});
+const SHEET_ID = "1YWg9T9NdD0nJhkn0NNGDbEQ1PVLDbCtzEyTZRzuIvFM";
+const CARS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Cars`;
+const AVAILABILITY_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Availability`;
+
+let cars = [];
+let blockedRows = [];
+
+function parseCSV(text){
+  const rows = [];
+  let row = [], cell = "", quote = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
+    if(c === '"' && quote && n === '"'){ cell += '"'; i++; }
+    else if(c === '"') quote = !quote;
+    else if(c === "," && !quote){ row.push(cell.trim()); cell = ""; }
+    else if((c === "\n" || c === "\r") && !quote){
+      if(cell || row.length){ row.push(cell.trim()); rows.push(row); row = []; cell = ""; }
+      if(c === "\r" && n === "\n") i++;
+    }
+    else cell += c;
+  }
+  if(cell || row.length){ row.push(cell.trim()); rows.push(row); }
+  return rows;
 }
+
+function rowsToObjects(rows){
+  const headers = rows.shift().map(h => h.trim());
+  return rows.filter(r => r.some(x => x)).map(r => {
+    const obj = {};
+    headers.forEach((h,i) => obj[h] = (r[i] || "").trim());
+    return obj;
+  });
+}
+
+async function loadSheet(){
+  try{
+    const [carsText, availText] = await Promise.all([
+      fetch(CARS_URL).then(r => r.text()),
+      fetch(AVAILABILITY_URL).then(r => r.text())
+    ]);
+    cars = rowsToObjects(parseCSV(carsText)).filter(c => (c.Active || "TRUE").toUpperCase() !== "FALSE");
+    blockedRows = rowsToObjects(parseCSV(availText)).filter(r => r["Car ID"] && r["Start Date"] && r["End Date"]);
+    document.getElementById("sheetStatus").textContent = `โหลดข้อมูลสำเร็จ: รถ ${cars.length} คัน / รายการไม่ว่าง ${blockedRows.length} รายการ`;
+  }catch(err){
+    console.error(err);
+    document.getElementById("sheetStatus").textContent = "โหลด Google Sheet ไม่สำเร็จ เช็กว่าชีทเป็น Anyone with link: Viewer และชื่อแท็บ Cars / Availability ถูกต้อง";
+    cars = [
+      { "Car ID":"ativ2017", "Car Name":"Yaris Ativ", "Year":"2017" },
+      { "Car ID":"ativ2019", "Car Name":"Yaris Ativ", "Year":"2019" },
+      { "Car ID":"ativ2021", "Car Name":"Yaris Ativ", "Year":"2021" },
+      { "Car ID":"ativ2022", "Car Name":"Yaris Ativ", "Year":"2022" },
+      { "Car ID":"yaris2025", "Car Name":"Yaris All New", "Year":"2025" }
+    ];
+    blockedRows = [];
+  }
+}
+
+function toDate(s){ return new Date(s + "T00:00:00"); }
+function overlap(start, end, bStart, bEnd){
+  return toDate(start) <= toDate(bEnd) && toDate(end) >= toDate(bStart);
+}
+function carDisplayName(car){
+  const name = car["Car Name"] || car["car_name"] || "";
+  const year = car["Year"] || car["year"] || "";
+  return `${name} ${year}`.trim();
+}
+
+function checkAvailability(){
+  const start = document.getElementById("startDate").value;
+  const end = document.getElementById("endDate").value;
+  const results = document.getElementById("results");
+
+  if(!start || !end){ alert("เลือกวันที่รับรถและวันที่คืนรถก่อนนะคะ"); return; }
+  if(toDate(end) < toDate(start)){ alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ"); return; }
+
+  results.innerHTML = "";
+
+  cars.forEach(car => {
+    const carId = car["Car ID"] || car["car_id"];
+    const display = carDisplayName(car);
+    const blocked = blockedRows.filter(r => (r["Car ID"] || r["car_id"]) === carId)
+      .some(r => overlap(start, end, r["Start Date"], r["End Date"]));
+
+    const bookingLink = `booking.html?car=${encodeURIComponent(display)}&pickupDate=${encodeURIComponent(start)}&returnDate=${encodeURIComponent(end)}`;
+
+    const div = document.createElement("div");
+    div.className = "car";
+    div.innerHTML = `
+      <div class="carTop">
+        <div>
+          <b>${display}</b>
+          <div class="small">${blocked ? "รถคันนี้ไม่ว่างในช่วงวันที่เลือก" : "รถคันนี้น่าจะว่างในช่วงวันที่เลือก"}</div>
+          ${blocked ? "" : `<div class="actions" style="grid-template-columns:1fr;margin-top:12px"><a class="linkbtn primary" href="${bookingLink}">จองรถคันนี้</a></div>`}
+        </div>
+        <span class="status ${blocked ? "unavailable" : "available"}">${blocked ? "ไม่ว่าง" : "ว่าง"}</span>
+      </div>
+    `;
+    results.appendChild(div);
+  });
+
+  document.getElementById("resultCard").style.display = "block";
+  document.getElementById("resultCard").scrollIntoView({behavior:"smooth"});
+}
+
+loadSheet();
 </script>
 </body>
 </html>

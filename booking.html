@@ -5,107 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>จองรถเช่า | กอกอล์ รถเช่าหาดใหญ่</title>
 <style>
-:root{
-  --ink:#172033; --muted:#667085; --blue:#2f6bff; --cyan:#72d7ff;
-  --bg:#f5f9ff; --card:rgba(255,255,255,.88); --line:rgba(135,158,205,.24);
-  --shadow:0 18px 46px rgba(31,77,150,.12); --radius:28px;
-}
+:root{--ink:#172033;--muted:#667085;--blue:#2f6bff;--cyan:#72d7ff;--card:rgba(255,255,255,.88);--line:rgba(135,158,205,.24);--shadow:0 18px 46px rgba(31,77,150,.12)}
 *{box-sizing:border-box}
-body{
-  margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:var(--ink); background:
-  radial-gradient(circle at 8% 8%, rgba(114,215,255,.36), transparent 30%),
-  radial-gradient(circle at 90% 0%, rgba(47,107,255,.20), transparent 35%),
-  linear-gradient(180deg,#eef6ff 0%,#ffffff 100%);
-  padding:18px;
-}
-.wrap{max-width:820px;margin:auto}
-.hero,.card{
-  background:var(--card); border:1px solid var(--line); border-radius:34px;
-  box-shadow:var(--shadow); backdrop-filter:blur(16px); padding:24px; margin:14px 0;
-}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 8%,rgba(114,215,255,.36),transparent 30%),radial-gradient(circle at 90% 0%,rgba(47,107,255,.20),transparent 35%),linear-gradient(180deg,#eef6ff 0%,#ffffff 100%);padding:18px}
+.wrap{max-width:820px;margin:auto}.hero,.card{background:var(--card);border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px;margin:14px 0}
 .kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(47,107,255,.10);color:#2457d6;font-weight:800;font-size:13px}
-h1{font-size:34px;line-height:1.05;margin:16px 0 10px;letter-spacing:-.8px}
-h2{font-size:21px;margin:0 0 14px}
-p{color:var(--muted);line-height:1.6;margin:0}
+h1{font-size:34px;line-height:1.05;margin:16px 0 10px;letter-spacing:-.8px}h2{font-size:21px;margin:0 0 14px}p{color:var(--muted);line-height:1.6;margin:0}
 label{display:block;font-weight:800;margin:14px 0 7px}
-input,select,textarea{
-  width:100%; border:1px solid rgba(135,158,205,.36); border-radius:18px;
-  padding:14px 14px; font-size:16px; font-family:inherit; background:#fff; color:var(--ink);
-  outline:none;
-}
-textarea{min-height:100px;resize:vertical}
-.row{display:grid;gap:12px}
-@media(min-width:720px){.row.two{grid-template-columns:1fr 1fr}}
-.btn{
-  width:100%; border:0; min-height:54px; margin-top:18px; cursor:pointer;
-  border-radius:999px; padding:14px 18px; font-weight:900; font-size:16px;
-  background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#fff;
-  box-shadow:0 12px 28px rgba(47,107,255,.22);
-}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.linkbtn{
-  flex:1; text-align:center; text-decoration:none; border-radius:999px; padding:13px 16px; font-weight:900;
-  background:linear-gradient(135deg,#fff,#eff6ff);color:#2457d6;border:1px solid rgba(47,107,255,.16)
-}
-.note{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.5}
+input,select,textarea{width:100%;border:1px solid rgba(135,158,205,.36);border-radius:18px;padding:14px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);outline:none}
+textarea{min-height:100px;resize:vertical}.row{display:grid;gap:12px}@media(min-width:720px){.row.two{grid-template-columns:1fr 1fr}}
+.btn{width:100%;border:0;min-height:54px;margin-top:18px;cursor:pointer;border-radius:999px;padding:14px 18px;font-weight:900;font-size:16px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;box-shadow:0 12px 28px rgba(47,107,255,.22)}
 .back{display:inline-block;text-decoration:none;color:#2457d6;font-weight:900;margin-bottom:12px}
-.summary{
-  white-space:pre-wrap; background:#f6f9ff; border:1px dashed rgba(47,107,255,.28);
-  padding:14px; border-radius:18px; color:#344054; font-size:14px; line-height:1.5;
-}
+.note{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.5}
+.summary{white-space:pre-wrap;background:#f6f9ff;border:1px dashed rgba(47,107,255,.28);padding:14px;border-radius:18px;color:#344054;font-size:14px;line-height:1.5}
+.actions{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}@media(min-width:720px){.actions{grid-template-columns:1fr 1fr}}
+.linkbtn{text-align:center;text-decoration:none;border-radius:999px;padding:13px 16px;font-weight:900;background:linear-gradient(135deg,#fff,#eff6ff);color:#2457d6;border:1px solid rgba(47,107,255,.16)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="index.html">← กลับหน้าแรก</a>
-
   <section class="hero">
     <span class="kicker">📝 Booking Request</span>
     <h1>จองรถเช่าหาดใหญ่ 🩵</h1>
     <p>กรอกข้อมูลเพื่อส่งคำขอจองรถ ทีมงานจะตรวจสอบคิวรถและติดต่อกลับเพื่อยืนยันอีกครั้ง</p>
   </section>
-
   <section class="card">
     <h2>ข้อมูลการจอง</h2>
-
     <form id="bookingForm">
-      <label>ชื่อ-นามสกุล</label>
-      <input id="name" required placeholder="เช่น คุณกอกอล์">
-
+      <label>ชื่อ-นามสกุล</label><input id="name" required placeholder="เช่น คุณกอกอล์">
       <div class="row two">
-        <div>
-          <label>เบอร์โทร</label>
-          <input id="phone" required inputmode="tel" placeholder="08x-xxx-xxxx">
-        </div>
-        <div>
-          <label>LINE ID</label>
-          <input id="lineid" placeholder="ถ้ามี">
-        </div>
+        <div><label>เบอร์โทร</label><input id="phone" required inputmode="tel" placeholder="08x-xxx-xxxx"></div>
+        <div><label>LINE ID</label><input id="lineid" placeholder="ถ้ามี"></div>
       </div>
-
       <div class="row two">
-        <div>
-          <label>วันที่รับรถ</label>
-          <input id="pickupDate" type="date" required>
-        </div>
-        <div>
-          <label>วันที่คืนรถ</label>
-          <input id="returnDate" type="date" required>
-        </div>
+        <div><label>วันที่รับรถ</label><input id="pickupDate" type="date" required></div>
+        <div><label>วันที่คืนรถ</label><input id="returnDate" type="date" required></div>
       </div>
-
       <div class="row two">
-        <div>
-          <label>เวลารับรถ</label>
-          <input id="pickupTime" type="time">
-        </div>
-        <div>
-          <label>เวลาคืนรถ</label>
-          <input id="returnTime" type="time">
-        </div>
+        <div><label>เวลารับรถ</label><input id="pickupTime" type="time"></div>
+        <div><label>เวลาคืนรถ</label><input id="returnTime" type="time"></div>
       </div>
-
       <label>รุ่นรถที่สนใจ</label>
       <select id="car" required>
         <option value="">เลือกรุ่นรถ</option>
@@ -116,7 +56,6 @@ textarea{min-height:100px;resize:vertical}
         <option>Yaris All New 2025</option>
         <option>ยังไม่แน่ใจ ให้ช่วยแนะนำ</option>
       </select>
-
       <label>สถานที่รับรถ</label>
       <select id="location" required>
         <option value="">เลือกสถานที่รับรถ</option>
@@ -125,20 +64,15 @@ textarea{min-height:100px;resize:vertical}
         <option>โรงแรม / ที่พัก</option>
         <option>อื่น ๆ</option>
       </select>
-
       <label>หมายเหตุเพิ่มเติม</label>
-      <textarea id="note" placeholder="เช่น ไฟลท์บิน, โรงแรม, เดินทางต่างจังหวัด, ต้องการคาร์ซีท ฯลฯ"></textarea>
-
+      <textarea id="note" placeholder="เช่น ไฟลท์บิน, โรงแรม, เดินทางต่างจังหวัด ฯลฯ"></textarea>
       <button class="btn" type="submit">ส่งคำขอจองผ่าน LINE</button>
       <div class="note">ระบบจะเปิด LINE พร้อมข้อความสรุปการจองให้อัตโนมัติ ลูกค้ากดส่งใน LINE อีกครั้งเพื่อยืนยัน</div>
     </form>
   </section>
-
   <section class="card" id="previewCard" style="display:none">
-    <h2>ข้อความสรุปการจอง</h2>
-    <div class="summary" id="summary"></div>
+    <h2>ข้อความสรุปการจอง</h2><div class="summary" id="summary"></div>
   </section>
-
   <section class="card">
     <h2>ติดต่อโดยตรง</h2>
     <div class="actions">
@@ -147,27 +81,32 @@ textarea{min-height:100px;resize:vertical}
     </div>
   </section>
 </div>
-
 <script>
-const form = document.getElementById('bookingForm');
-form.addEventListener('submit', function(e){
+const params = new URLSearchParams(window.location.search);
+window.addEventListener("DOMContentLoaded", () => {
+  const car = params.get("car");
+  const pickupDate = params.get("pickupDate");
+  const returnDate = params.get("returnDate");
+  if(car){
+    const select = document.getElementById("car");
+    let found = false;
+    [...select.options].forEach(o => { if(o.text === car){ o.selected = true; found = true; } });
+    if(!found){
+      const opt = new Option(car, car, true, true);
+      select.add(opt);
+    }
+  }
+  if(pickupDate) document.getElementById("pickupDate").value = pickupDate;
+  if(returnDate) document.getElementById("returnDate").value = returnDate;
+});
+document.getElementById('bookingForm').addEventListener('submit', function(e){
   e.preventDefault();
-
   const data = {
-    name: document.getElementById('name').value.trim(),
-    phone: document.getElementById('phone').value.trim(),
-    lineid: document.getElementById('lineid').value.trim(),
-    pickupDate: document.getElementById('pickupDate').value,
-    returnDate: document.getElementById('returnDate').value,
-    pickupTime: document.getElementById('pickupTime').value,
-    returnTime: document.getElementById('returnTime').value,
-    car: document.getElementById('car').value,
-    location: document.getElementById('location').value,
-    note: document.getElementById('note').value.trim()
+    name: name.value.trim(), phone: phone.value.trim(), lineid: lineid.value.trim(),
+    pickupDate: pickupDate.value, returnDate: returnDate.value, pickupTime: pickupTime.value,
+    returnTime: returnTime.value, car: car.value, location: location.value, note: note.value.trim()
   };
-
-  const msg =
-`สวัสดีค่ะ/ครับ ต้องการส่งคำขอจองรถเช่า K&K รถเช่าหาดใหญ่
+  const msg = `สวัสดีค่ะ/ครับ ต้องการส่งคำขอจองรถเช่า K&K รถเช่าหาดใหญ่
 
 ชื่อ: ${data.name}
 เบอร์โทร: ${data.phone}
@@ -183,12 +122,9 @@ LINE ID: ${data.lineid || "-"}
 หมายเหตุ: ${data.note || "-"}
 
 รบกวนตรวจสอบคิวรถและติดต่อกลับเพื่อยืนยันการจองค่ะ/ครับ`;
-
   document.getElementById('summary').textContent = msg;
   document.getElementById('previewCard').style.display = 'block';
-
-  const encoded = encodeURIComponent(msg);
-  window.location.href = `https://line.me/R/msg/text/?${encoded}`;
+  window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
 });
 </script>
 </body>
