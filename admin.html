@@ -222,9 +222,155 @@ td b{color:var(--ink)}
   .mobile-list{display:block}
   .hero,.card{border-radius:28px;padding:20px}
 }
+
+.admin-lock{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 20% 0%,rgba(75,155,218,.18),transparent 34%),
+    radial-gradient(circle at 90% 8%,rgba(242,181,68,.12),transparent 30%),
+    linear-gradient(180deg,#ffffff 0%,#f4f7fb 100%);
+}
+.lock-card{
+  width:min(390px,100%);
+  border-radius:34px;
+  padding:28px 22px;
+  text-align:center;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(29,79,134,.16);
+  box-shadow:0 28px 80px rgba(16,35,58,.18);
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+}
+.lock-icon{
+  width:62px;
+  height:62px;
+  border-radius:22px;
+  margin:0 auto 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:30px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  box-shadow:0 16px 34px rgba(29,79,134,.22);
+}
+.lock-title{
+  font-size:24px;
+  font-weight:950;
+  color:var(--ink);
+}
+.lock-sub{
+  margin-top:6px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.pin-dots{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:22px 0 18px;
+}
+.pin-dot{
+  width:12px;
+  height:12px;
+  border-radius:999px;
+  border:1px solid rgba(29,79,134,.28);
+  background:rgba(255,255,255,.82);
+  transition:.2s ease;
+}
+.pin-dot.filled{
+  background:var(--blue);
+  border-color:var(--blue);
+  box-shadow:0 0 0 5px rgba(29,79,134,.08);
+}
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  max-width:290px;
+  margin:0 auto;
+}
+.key{
+  height:62px;
+  border-radius:999px;
+  border:1px solid rgba(29,79,134,.14);
+  background:rgba(255,255,255,.72);
+  color:var(--ink);
+  font-size:24px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 12px 26px rgba(16,35,58,.08);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+.key:hover{
+  transform:translateY(-2px);
+  border-color:rgba(242,181,68,.75);
+  background:rgba(255,255,255,.94);
+  box-shadow:0 16px 34px rgba(16,35,58,.12);
+}
+.key:active{transform:scale(.94)}
+.key.action{
+  font-size:14px;
+  color:var(--blue);
+}
+.lock-error{
+  min-height:20px;
+  margin-top:14px;
+  color:var(--red);
+  font-size:13px;
+  font-weight:900;
+}
+body.locked .wrap{
+  filter:blur(10px);
+  pointer-events:none;
+  user-select:none;
+}
+
 </style>
 </head>
-<body>
+<body class="locked">
+
+<div class="admin-lock" id="adminLock">
+  <div class="lock-card">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">K&K Admin</div>
+    <div class="lock-sub">กรุณาใส่รหัสผ่าน 6 หลัก<br>เพื่อเข้าใช้งานระบบหลังบ้าน</div>
+
+    <div class="pin-dots" id="pinDots">
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+    </div>
+
+    <div class="keypad">
+      <button class="key" onclick="pressPin('1')">1</button>
+      <button class="key" onclick="pressPin('2')">2</button>
+      <button class="key" onclick="pressPin('3')">3</button>
+      <button class="key" onclick="pressPin('4')">4</button>
+      <button class="key" onclick="pressPin('5')">5</button>
+      <button class="key" onclick="pressPin('6')">6</button>
+      <button class="key" onclick="pressPin('7')">7</button>
+      <button class="key" onclick="pressPin('8')">8</button>
+      <button class="key" onclick="pressPin('9')">9</button>
+      <button class="key action" onclick="clearPin()">ล้าง</button>
+      <button class="key" onclick="pressPin('0')">0</button>
+      <button class="key action" onclick="deletePin()">ลบ</button>
+    </div>
+
+    <div class="lock-error" id="lockError"></div>
+  </div>
+</div>
+
 <div class="wrap">
   <a class="back" href="index.html">← กลับหน้าแรก</a>
 
@@ -286,6 +432,63 @@ td b{color:var(--ink)}
 </div>
 
 <script>
+
+const ADMIN_PIN = "993857";
+let currentPin = "";
+
+function updatePinDots(){
+  const dots = document.querySelectorAll(".pin-dot");
+  dots.forEach((dot,index) => {
+    dot.classList.toggle("filled", index < currentPin.length);
+  });
+}
+
+function unlockAdmin(){
+  sessionStorage.setItem("kk_admin_unlocked", "yes");
+  document.getElementById("adminLock").style.display = "none";
+  document.body.classList.remove("locked");
+}
+
+function wrongPin(){
+  const error = document.getElementById("lockError");
+  error.textContent = "รหัสไม่ถูกต้อง กรุณาลองอีกครั้ง";
+  currentPin = "";
+  updatePinDots();
+  setTimeout(() => error.textContent = "", 1800);
+}
+
+function pressPin(number){
+  if(currentPin.length >= 6) return;
+  currentPin += number;
+  updatePinDots();
+
+  if(currentPin.length === 6){
+    if(currentPin === ADMIN_PIN){
+      unlockAdmin();
+    }else{
+      setTimeout(wrongPin, 120);
+    }
+  }
+}
+
+function deletePin(){
+  currentPin = currentPin.slice(0,-1);
+  updatePinDots();
+}
+
+function clearPin(){
+  currentPin = "";
+  updatePinDots();
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  if(sessionStorage.getItem("kk_admin_unlocked") === "yes"){
+    unlockAdmin();
+  }else{
+    updatePinDots();
+  }
+});
+
 const SHEET_ID = "1Z6M8UH2wnzGYFUcKE-zpQFSGEV-FaAp8aOWr2FAyzQ4";
 const BOOKING_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Booking`;
 const CARS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Cars`;
