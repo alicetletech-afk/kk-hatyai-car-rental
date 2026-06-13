@@ -368,7 +368,7 @@ function render(){
     const pickupTime = get(row, ["pickupTime","Pickup Time","เวลารับรถ"]) || "-";
     const returnTime = get(row, ["returnTime","Return Time","เวลาคืนรถ"]) || "-";
     const location = get(row, ["location","Location","สถานที่รับรถ"]) || "-";
-    const price = get(row, ["price","Price","ราคา"]) || "-";
+    const price = get(row, ["price","Price","ราคา"]) || "";
     const note = get(row, ["note","Note","หมายเหตุ"]) || "-";
     const status = normalizeStatus(get(row, ["Status","status","สถานะ"]));
     const rowNumber = row.__rowNumber;
@@ -389,7 +389,12 @@ function render(){
       <td>${car}<div class="small">${note}</div></td>
       <td>${pickupDate} ${pickupTime}<br>ถึง ${returnDate} ${returnTime}</td>
       <td>${location}</td>
-      <td>${price}</td>
+      <td>
+<div style="display:flex;gap:6px;align-items:center">
+<input style="width:90px;padding:8px;border-radius:10px;border:1px solid #d0d5dd" value="${price}" id="price_${rowNumber}">
+<button class="mini" onclick="updatePrice(${rowNumber})">💾</button>
+</div>
+</td>
       <td>${select}</td>
       <td>${contacts}</td>
     `;
@@ -403,7 +408,10 @@ function render(){
       <div class="row"><div class="label">วันรับ</div><div>${pickupDate} ${pickupTime}</div></div>
       <div class="row"><div class="label">วันคืน</div><div>${returnDate} ${returnTime}</div></div>
       <div class="row"><div class="label">สถานที่</div><div>${location}</div></div>
-      <div class="row"><div class="label">ราคา</div><div>${price}</div></div>
+      <div class="row"><div class="label">ราคา</div><div>
+<input style="width:100px;padding:8px;border-radius:10px;border:1px solid #d0d5dd" value="${price}" id="mprice_${rowNumber}">
+<button class="mini" onclick="updatePrice(${rowNumber},true)">💾</button>
+</div></div>
       <div class="row"><div class="label">หมายเหตุ</div><div>${note}</div></div>
       <div style="margin-top:12px">${select}</div>
       <div style="margin-top:12px">${contacts}</div>
@@ -445,6 +453,29 @@ async function updateStatus(rowNumber, status, selectEl){
     document.getElementById("statusText").textContent = oldText || "อัปเดตไม่สำเร็จ";
     alert("อัปเดตสถานะไม่สำเร็จ กรุณาลองอีกครั้ง");
   }
+}
+
+
+async function updatePrice(rowNumber,mobile=false){
+ const input=document.getElementById((mobile?"mprice_":"price_")+rowNumber);
+ const price=input.value;
+ const formData=new URLSearchParams();
+ formData.append("action","updatePrice");
+ formData.append("rowNumber",rowNumber);
+ formData.append("price",price);
+ await fetch(WEB_APP_URL,{
+   method:"POST",
+   mode:"no-cors",
+   headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+   body:formData.toString()
+ });
+ const item=bookings.find(b=>b.__rowNumber===rowNumber);
+ if(item){
+   if(item["Price"]!==undefined)item["Price"]=price;
+   else if(item["price"]!==undefined)item["price"]=price;
+   else item["Price"]=price;
+ }
+ document.getElementById("statusText").textContent="อัปเดตราคาเรียบร้อย";
 }
 
 loadBookings();
