@@ -84,7 +84,7 @@ p{color:var(--muted);line-height:1.6;margin:0}
   gap:10px;
   margin-top:16px;
 }
-@media(min-width:760px){.toolbar{grid-template-columns:1fr 220px 150px}}
+@media(min-width:760px){.toolbar{grid-template-columns:1fr 220px 150px 170px 150px}}
 input,select{
   width:100%;
   border:1px solid rgba(29,79,134,.18);
@@ -215,6 +215,51 @@ td b{color:var(--ink)}
   background:linear-gradient(135deg,#153A66,#2E77B5);
   border-color:rgba(242,181,68,.85);
 }
+
+.add-panel{
+  display:none;
+  margin-top:16px;
+  padding:18px;
+  border-radius:26px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(29,79,134,.14);
+  box-shadow:0 12px 30px rgba(16,35,58,.07);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.add-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media(min-width:760px){
+  .add-grid{grid-template-columns:repeat(3,1fr)}
+}
+.add-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.btn.secondary{
+  color:var(--blue);
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(29,79,134,.16);
+  box-shadow:0 12px 26px rgba(16,35,58,.07);
+}
+.btn.red{
+  background:linear-gradient(135deg,var(--red),#F05B42);
+  box-shadow:0 14px 30px rgba(217,67,47,.20);
+}
+.btn.link{
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+}
+
 @media(max-width:760px){
   .table-wrap{display:none}
   .mobile-list{display:block}
@@ -245,6 +290,66 @@ td b{color:var(--ink)}
         <option>ยกเลิก</option>
       </select>
       <button class="btn" onclick="loadBookings()">รีเฟรชข้อมูล</button>
+      <button class="btn red" onclick="toggleAddPanel()">+ เพิ่มการจอง</button>
+      <a class="btn link" href="booking.html">ไปหน้าจอง</a>
+    </div>
+
+
+    <div class="add-panel" id="addPanel">
+      <h2>เพิ่มการจองเอง</h2>
+      <p class="small">ใช้สำหรับรายการที่แม่รับจองจากโทรศัพท์ / LINE / หน้าร้าน</p>
+
+      <div class="add-grid">
+        <div>
+          <label>ชื่อลูกค้า</label>
+          <input class="edit-input" id="newName" placeholder="เช่น คุณลูกค้า">
+        </div>
+        <div>
+          <label>เบอร์โทร</label>
+          <input class="edit-input" id="newPhone" inputmode="tel" placeholder="08x-xxx-xxxx">
+        </div>
+        <div>
+          <label>LINE ID</label>
+          <input class="edit-input" id="newLineid" placeholder="ถ้ามี">
+        </div>
+
+        <div>
+          <label>รถ</label>
+          <select class="edit-select" id="newCar"></select>
+        </div>
+        <div>
+          <label>วันที่รับรถ</label>
+          <input class="edit-input" id="newPickupDate" type="date">
+        </div>
+        <div>
+          <label>วันที่คืนรถ</label>
+          <input class="edit-input" id="newReturnDate" type="date">
+        </div>
+
+        <div>
+          <label>สถานที่รับรถ</label>
+          <input class="edit-input" id="newLocation" placeholder="สนามบิน / ตัวเมือง / โรงแรม">
+        </div>
+        <div>
+          <label>ราคา</label>
+          <input class="edit-input" id="newPrice" placeholder="เช่น 2500">
+        </div>
+        <div>
+          <label>สถานะ</label>
+          <select class="edit-select" id="newStatus">
+            <option>รอคอนเฟิร์ม</option>
+            <option>ยืนยันแล้ว</option>
+            <option>รับรถแล้ว</option>
+            <option>คืนรถแล้ว</option>
+            <option>ยกเลิก</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="add-actions">
+        <button class="btn red" onclick="addBooking()">💾 บันทึกการจอง</button>
+        <button class="btn secondary" onclick="toggleAddPanel(false)">ยกเลิก</button>
+      </div>
     </div>
 
     <div class="stats">
@@ -566,6 +671,96 @@ async function updateBooking(rowNumber,mobile=false){
     console.error(err);
     document.getElementById("statusText").textContent = "บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง";
     alert("บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง");
+  }
+}
+
+function fillNewCarOptions(){
+  const select = document.getElementById("newCar");
+  if(!select) return;
+  const names = cars.map(car => {
+    const display = get(car, ["Display Name","display_name"]);
+    if(display) return display;
+    const name = get(car, ["Car Name","car_name"]);
+    const year = get(car, ["Year","year"]);
+    return `${name} ${year}`.trim();
+  }).filter(Boolean);
+
+  select.innerHTML = `<option value="">เลือกรถ</option>` + names.map(name => `<option value="${name}">${name}</option>`).join("");
+}
+
+function toggleAddPanel(force){
+  const panel = document.getElementById("addPanel");
+  const show = typeof force === "boolean" ? force : panel.style.display !== "block";
+  panel.style.display = show ? "block" : "none";
+
+  if(show){
+    fillNewCarOptions();
+    const today = new Date().toISOString().split("T")[0];
+    if(!document.getElementById("newPickupDate").value) document.getElementById("newPickupDate").value = today;
+    if(!document.getElementById("newReturnDate").value) document.getElementById("newReturnDate").value = today;
+    panel.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
+function clearAddForm(){
+  ["newName","newPhone","newLineid","newPickupDate","newReturnDate","newLocation","newPrice"].forEach(id => {
+    const input = document.getElementById(id);
+    if(input) input.value = "";
+  });
+  document.getElementById("newCar").value = "";
+  document.getElementById("newStatus").value = "รอคอนเฟิร์ม";
+}
+
+async function addBooking(){
+  const name = document.getElementById("newName").value.trim();
+  const phone = document.getElementById("newPhone").value.trim();
+  const lineid = document.getElementById("newLineid").value.trim();
+  const car = document.getElementById("newCar").value;
+  const pickupDate = document.getElementById("newPickupDate").value;
+  const returnDate = document.getElementById("newReturnDate").value;
+  const location = document.getElementById("newLocation").value.trim();
+  const price = document.getElementById("newPrice").value.trim();
+  const status = document.getElementById("newStatus").value;
+
+  if(!name || !phone || !car || !pickupDate || !returnDate){
+    alert("กรอกชื่อ เบอร์ รถ วันที่รับ และวันที่คืนก่อนนะคะ");
+    return;
+  }
+
+  if(new Date(returnDate) < new Date(pickupDate)){
+    alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ");
+    return;
+  }
+
+  document.getElementById("statusText").textContent = "กำลังเพิ่มการจอง...";
+
+  const formData = new URLSearchParams();
+  formData.append("name", name);
+  formData.append("phone", phone);
+  formData.append("lineid", lineid);
+  formData.append("car", car);
+  formData.append("pickupDate", pickupDate);
+  formData.append("returnDate", returnDate);
+  formData.append("location", location);
+  formData.append("price", price);
+  formData.append("status", status);
+
+  try{
+    await fetch(WEB_APP_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+      body:formData.toString()
+    });
+
+    document.getElementById("statusText").textContent = "เพิ่มการจองเรียบร้อย";
+    clearAddForm();
+    toggleAddPanel(false);
+    await loadBookings();
+  }catch(err){
+    console.error(err);
+    document.getElementById("statusText").textContent = "เพิ่มการจองไม่สำเร็จ กรุณาลองอีกครั้ง";
+    alert("เพิ่มการจองไม่สำเร็จ กรุณาลองอีกครั้ง");
   }
 }
 
