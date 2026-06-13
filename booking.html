@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>จองรถเช่า | กอกอล์ รถเช่าหาดใหญ่</title>
+<title>จองรถเช่า | K&K รถเช่าหาดใหญ่</title>
 <style>
 :root{
   --ink:#172033; --muted:#667085; --blue:#2f6bff; --cyan:#72d7ff;
@@ -69,6 +69,88 @@ textarea{min-height:100px;resize:vertical}
   text-align:center; text-decoration:none; border-radius:999px; padding:13px 16px; font-weight:900;
   background:linear-gradient(135deg,#fff,#eff6ff); color:#2457d6; border:1px solid rgba(47,107,255,.16);
 }
+
+.success-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(23,32,51,.42);
+  backdrop-filter:blur(10px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:999;
+}
+.success-modal{
+  width:min(520px,100%);
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(135,158,205,.28);
+  border-radius:34px;
+  box-shadow:0 28px 80px rgba(23,32,51,.24);
+  padding:26px;
+  text-align:left;
+}
+.success-icon{
+  width:58px;
+  height:58px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  color:#fff;
+  font-size:28px;
+  margin-bottom:14px;
+}
+.success-modal h2{
+  font-size:26px;
+  margin:0 0 10px;
+}
+.success-modal p{
+  margin:0 0 14px;
+}
+.success-list{
+  margin:14px 0;
+  padding:14px;
+  border-radius:22px;
+  background:#f6f9ff;
+  border:1px solid rgba(47,107,255,.12);
+  color:#344054;
+  line-height:1.7;
+}
+.success-actions{
+  display:grid;
+  gap:10px;
+  margin-top:16px;
+}
+@media(min-width:520px){
+  .success-actions{grid-template-columns:1fr 1fr}
+}
+.success-btn{
+  min-height:50px;
+  border-radius:999px;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  padding:12px 16px;
+  border:1px solid rgba(47,107,255,.16);
+}
+.success-btn.primary{
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  box-shadow:0 12px 28px rgba(47,107,255,.20);
+}
+.success-btn.secondary{
+  color:#2457d6;
+  background:linear-gradient(135deg,#fff,#eff6ff);
+}
+.form-success{
+  background:#ecfdf3 !important;
+  color:#067647 !important;
+}
+
 </style>
 </head>
 <body>
@@ -86,7 +168,7 @@ textarea{min-height:100px;resize:vertical}
 
     <form id="bookingForm">
       <label>ชื่อ-นามสกุล</label>
-      <input id="customerName" required placeholder="เช่น คุณกอกอล์">
+      <input id="customerName" required placeholder="เช่น คุณลูกค้า">
 
       <div class="row two">
         <div>
@@ -140,18 +222,29 @@ textarea{min-height:100px;resize:vertical}
       <textarea id="note" placeholder="เช่น ไฟลท์บิน, โรงแรม, เดินทางต่างจังหวัด ฯลฯ"></textarea>
 
       <button class="btn" id="submitBtn" type="submit">ส่งข้อมูลการจอง</button>
-      <div class="note">ระบบจะบันทึกข้อมูลลง Google Sheet และเปิด LINE พร้อมข้อความสรุปการจองให้อัตโนมัติ</div>
+      <div class="note">ระบบจะส่งคำขอจองให้เจ้าหน้าที่ตรวจสอบ และติดต่อกลับเพื่อคอนเฟิร์มอีกครั้ง</div>
       <div class="statusText" id="statusText"></div>
     </form>
   </section>
 
-  <section class="card" id="previewCard" style="display:none">
-    <h2>ข้อความสรุปการจอง</h2>
-    <div class="summary" id="summary"></div>
-    <div class="actions">
-      <a class="linkbtn" id="lineManual" href="#" target="_blank">เปิด LINE เพื่อส่งข้อความ</a>
+  <div class="success-overlay" id="successOverlay" role="dialog" aria-modal="true">
+    <div class="success-modal">
+      <div class="success-icon">✓</div>
+      <h2>ส่งคำขอจองเรียบร้อยแล้ว</h2>
+      <p>ขอบคุณที่เลือกใช้บริการ <b>K&K รถเช่าหาดใหญ่</b></p>
+      <div class="success-list">
+        เจ้าหน้าที่จะตรวจสอบคิวรถและติดต่อกลับเพื่อ<br>
+        • ยืนยันการจอง<br>
+        • แจ้งรายละเอียดการรับรถ<br>
+        • ขอเอกสารเพิ่มเติม เช่น บัตรประชาชน / ใบขับขี่
+      </div>
+      <p class="small">หากต้องการติดต่อด่วน สามารถทัก LINE Official ได้ทันที</p>
+      <div class="success-actions">
+        <a class="success-btn primary" id="successLine" href="#" target="_blank">ติดต่อผ่าน LINE</a>
+        <a class="success-btn secondary" href="index.html">กลับหน้าแรก</a>
+      </div>
     </div>
-  </section>
+  </div>
 </div>
 
 <script>
@@ -385,11 +478,8 @@ LINE ID: ${data.lineid || "-"}
 
 รบกวนตรวจสอบคิวรถและติดต่อกลับเพื่อยืนยันการจองค่ะ/ครับ`;
 
-  el("summary").textContent = message;
-  el("previewCard").style.display = "block";
-
   const lineUrl = "https://line.me/R/oaMessage/@540snozl/?" + encodeURIComponent(message);
-  el("lineManual").href = lineUrl;
+  el("successLine").href = lineUrl;
 
   const submitBtn = el("submitBtn");
   submitBtn.disabled = true;
@@ -408,15 +498,16 @@ LINE ID: ${data.lineid || "-"}
       body: formData.toString()
     });
 
-    el("statusText").textContent = "ส่งข้อมูลแล้ว กำลังเปิด LINE...";
-    setTimeout(() => {
-      window.location.href = lineUrl;
-    }, 700);
+    submitBtn.textContent = "✓ ส่งคำขอจองเรียบร้อยแล้ว";
+    submitBtn.classList.add("form-success");
+    el("statusText").textContent = "จองสำเร็จ กรุณารอเจ้าหน้าที่ติดต่อกลับเพื่อคอนเฟิร์มและขอเอกสารเพิ่มเติม";
+    el("successOverlay").style.display = "flex";
   } catch(error) {
     console.error(error);
     el("statusText").classList.add("error");
     el("statusText").textContent = "ส่งข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง หรือกดเปิด LINE ด้านล่าง";
     submitBtn.disabled = false;
+    submitBtn.classList.remove("form-success");
     submitBtn.textContent = "ส่งข้อมูลการจอง";
   }
 });
