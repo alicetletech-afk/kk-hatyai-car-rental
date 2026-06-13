@@ -146,7 +146,18 @@ td b{color:var(--ink)}
   padding:8px 10px;
   font-weight:900;
   font-size:12px;
+  cursor:pointer;
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
 }
+.mini:hover{
+ transform:translateY(-2px) scale(1.05);
+ background:rgba(255,255,255,.92);
+ border-color:rgba(242,181,68,.65);
+ box-shadow:0 12px 24px rgba(16,35,58,.12);
+}
+.mini:active{transform:scale(.95);}
 .mobile-list{display:none}
 .booking-card{
   position:relative;
@@ -392,7 +403,7 @@ function render(){
       <td>
 <div style="display:flex;gap:6px;align-items:center">
 <input style="width:90px;padding:8px;border-radius:10px;border:1px solid #d0d5dd" value="${price}" id="price_${rowNumber}">
-<button class="mini" onclick="updatePrice(${rowNumber})">💾</button>
+<button class="mini" onclick="updatePrice(${rowNumber})">💾 บันทึก</button>
 </div>
 </td>
       <td>${select}</td>
@@ -410,7 +421,7 @@ function render(){
       <div class="row"><div class="label">สถานที่</div><div>${location}</div></div>
       <div class="row"><div class="label">ราคา</div><div>
 <input style="width:100px;padding:8px;border-radius:10px;border:1px solid #d0d5dd" value="${price}" id="mprice_${rowNumber}">
-<button class="mini" onclick="updatePrice(${rowNumber},true)">💾</button>
+<button class="mini" onclick="updatePrice(${rowNumber},true)">💾 บันทึก</button>
 </div></div>
       <div class="row"><div class="label">หมายเหตุ</div><div>${note}</div></div>
       <div style="margin-top:12px">${select}</div>
