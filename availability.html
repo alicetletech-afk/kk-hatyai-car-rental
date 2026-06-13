@@ -171,12 +171,11 @@ async function loadAll(){
     manualBlocks = rowsToObjects(parseCSV(availabilityText));
     bookings = rowsToObjects(parseCSV(bookingText));
 
-    document.getElementById("sheetStatus").textContent =
-      ``;
+    document.getElementById("sheetStatus").style.display = "none";
   }catch(err){
     console.error(err);
-    document.getElementById("sheetStatus").textContent =
-      "โหลด Google Sheet ไม่สำเร็จ เช็กว่าแชร์ Sheet เป็น Anyone with link: Viewer และชื่อแท็บ Cars / Availability / Booking ถูกต้อง";
+    document.getElementById("sheetStatus").style.display = "none";
+    console.error("โหลด Google Sheet ไม่สำเร็จ");
   }
 }
 
