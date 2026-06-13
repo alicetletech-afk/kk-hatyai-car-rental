@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>K&K รถเช่าหาดใหญ่</title>
+<title>กอกอล์ รถเช่าหาดใหญ่ | K&K รถเช่าหาดใหญ่</title>
 <style>
 :root{
   --ink:#172033;
@@ -149,6 +149,19 @@ p{color:var(--muted);line-height:1.6;margin:0}
   font-size:15px;
   line-height:1.55;
 }
+
+.car-price{
+  display:inline-flex;
+  align-items:center;
+  margin-top:12px;
+  padding:9px 12px;
+  border-radius:999px;
+  background:rgba(47,107,255,.09);
+  color:#2457d6;
+  font-size:14px;
+  font-weight:900;
+}
+
 .item{
   padding:12px 0;
   border-top:1px solid rgba(135,158,205,.16);
@@ -174,7 +187,7 @@ p{color:var(--muted);line-height:1.6;margin:0}
 <div class="wrap">
   <section class="hero">
     <span class="kicker">🚗 Hatyai Car Rental</span>
-    <h1>K&K รถเช่าหาดใหญ่ 🩵</h1>
+    <h1>กอกอล์ รถเช่าหาดใหญ่ 🩵</h1>
     <p>บริการรถเช่าหาดใหญ่ ขับง่าย ประหยัดน้ำมัน เหมาะสำหรับเที่ยว ทำงาน รับ-ส่งสนามบิน และเดินทางในเมือง</p>
 
     <div class="primary-cta">
@@ -202,7 +215,7 @@ p{color:var(--muted);line-height:1.6;margin:0}
 
   <section class="card">
     <h2>🚘 รถที่มีให้บริการ</h2>
-    <div id="carStatus" style="display:none"></div>
+    <div class="small" id="carStatus">กำลังโหลดรายชื่อรถจาก Google Sheet...</div>
     <div class="grid three" id="fleetGrid" style="margin-top:14px"></div>
   </section>
 
@@ -292,6 +305,24 @@ function sortNo(car){
   return Number(value || 999);
 }
 
+
+function carPrice(car){
+  const priceText = get(car, ["Price Text","price_text","ราคา"]);
+  if(priceText) return priceText;
+
+  const price = get(car, ["Price","price","Daily Price","daily_price","ราคา/วัน"]);
+  if(!price) return "";
+
+  const clean = String(price).replace(/,/g, "");
+  const number = Number(clean);
+
+  if(!isNaN(number)){
+    return `เริ่มต้น ${number.toLocaleString("th-TH")} บาท / วัน`;
+  }
+
+  return price;
+}
+
 async function initFleet(){
   const status = document.getElementById("carStatus");
   const grid = document.getElementById("fleetGrid");
@@ -303,7 +334,8 @@ async function initFleet(){
       .sort((a,b) => sortNo(a) - sortNo(b));
 
     grid.innerHTML = "";
-    
+    status.textContent = `โหลดรถสำเร็จ ${cars.length} รายการ`;
+
     cars.forEach(car => {
       const name = carName(car);
       const desc = carDesc(car);
@@ -315,16 +347,18 @@ async function initFleet(){
 
       const div = document.createElement("div");
       div.className = "car";
+      const price = carPrice(car);
       div.innerHTML = `
         <div class="car-img">${imageHTML}</div>
         <div class="car-title">${name}</div>
         <div class="car-desc">${desc}</div>
+        ${price ? `<div class="car-price">💰 ${price}</div>` : ""}
       `;
       grid.appendChild(div);
     });
   } catch(err) {
     console.error(err);
-    console.error("โหลดรายชื่อรถไม่สำเร็จ");
+    status.textContent = "โหลดรายชื่อรถไม่สำเร็จ กรุณาเช็ก Google Sheet";
   }
 }
 

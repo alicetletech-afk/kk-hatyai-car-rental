@@ -47,6 +47,18 @@ textarea{min-height:100px;resize:vertical}
 .note,.small{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.5}
 .statusText{margin-top:12px;font-size:14px;font-weight:800;color:#2457d6;line-height:1.5}
 .error{color:var(--red)}
+
+.price-box{
+  margin-top:10px;
+  padding:13px 14px;
+  border-radius:18px;
+  background:rgba(47,107,255,.08);
+  color:#2457d6;
+  font-size:14px;
+  font-weight:900;
+  display:none;
+}
+
 .summary{
   white-space:pre-wrap; background:#f6f9ff; border:1px dashed rgba(47,107,255,.28);
   padding:14px; border-radius:18px; color:#344054; font-size:14px; line-height:1.5;
@@ -113,6 +125,7 @@ textarea{min-height:100px;resize:vertical}
       <select id="car" required>
         <option value="">กำลังโหลดรายชื่อรถ...</option>
       </select>
+      <div class="price-box" id="priceBox"></div>
 
       <label>สถานที่รับรถ</label>
       <select id="location" required>
@@ -192,6 +205,39 @@ function carName(car){
   return `${name} ${year}`.trim();
 }
 
+
+function carPrice(car){
+  const priceText = get(car, ["Price Text","price_text","ราคา"]);
+  if(priceText) return priceText;
+
+  const price = get(car, ["Price","price","Daily Price","daily_price","ราคา/วัน"]);
+  if(!price) return "";
+
+  const clean = String(price).replace(/,/g, "");
+  const number = Number(clean);
+
+  if(!isNaN(number)){
+    return `เริ่มต้น ${number.toLocaleString("th-TH")} บาท / วัน`;
+  }
+
+  return price;
+}
+
+function updatePriceBox(){
+  const select = el("car");
+  const box = el("priceBox");
+  const selected = select.options[select.selectedIndex];
+  const price = selected ? selected.dataset.price : "";
+
+  if(price){
+    box.textContent = "💰 " + price;
+    box.style.display = "block";
+  }else{
+    box.textContent = "";
+    box.style.display = "none";
+  }
+}
+
 async function loadCarsDropdown(){
   const select = el("car");
   try {
@@ -199,7 +245,11 @@ async function loadCarsDropdown(){
     const cars = rowsToObjects(parseCSV(text)).filter(c => (get(c, ["Active","active"]) || "TRUE").toUpperCase() !== "FALSE");
 
     select.innerHTML = '<option value="">เลือกรุ่นรถ</option>';
-    cars.forEach(car => select.add(new Option(carName(car), carName(car))));
+    cars.forEach(car => {
+      const opt = new Option(carName(car), carName(car));
+      opt.dataset.price = carPrice(car);
+      select.add(opt);
+    });
     select.add(new Option("ยังไม่แน่ใจ ให้ช่วยแนะนำ", "ยังไม่แน่ใจ ให้ช่วยแนะนำ"));
 
     const selectedCar = params.get("car");
@@ -213,6 +263,9 @@ async function loadCarsDropdown(){
       });
       if(!found) select.add(new Option(selectedCar, selectedCar, true, true));
     }
+
+    updatePriceBox();
+    select.addEventListener("change", updatePriceBox);
   } catch(err) {
     select.innerHTML = `
       <option value="">เลือกรุ่นรถ</option>
@@ -292,6 +345,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   validateDates(false);
   loadCarsDropdown();
+  el("car").addEventListener("change", updatePriceBox);
 });
 
 el("bookingForm").addEventListener("submit", async function(event){
@@ -308,7 +362,8 @@ el("bookingForm").addEventListener("submit", async function(event){
     returnTime: el("returnTime").value,
     car: el("car").value,
     location: el("location").value,
-    note: el("note").value.trim()
+    note: el("note").value.trim(),
+    price: el("car").options[el("car").selectedIndex]?.dataset.price || ""
   };
 
   const message =
@@ -318,6 +373,7 @@ el("bookingForm").addEventListener("submit", async function(event){
 เบอร์โทร: ${data.phone}
 LINE ID: ${data.lineid || "-"}
 รุ่นรถที่สนใจ: ${data.car}
+ราคา: ${data.price || "-"}
 
 วันที่รับรถ: ${data.pickupDate}
 เวลารับรถ: ${data.pickupTime || "-"}
