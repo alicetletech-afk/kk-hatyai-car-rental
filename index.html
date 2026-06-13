@@ -39,8 +39,11 @@ body{
   padding:24px;
   margin:14px 0;
 }
+.kicker img{width:34px;height:34px;object-fit:cover;border-radius:10px;box-shadow:0 4px 12px rgba(16,35,58,.10)}
 .kicker{
   display:inline-flex;
+  align-items:center;
+  gap:10px;
   padding:8px 12px;
   border-radius:999px;
   background:rgba(29,79,134,.09);
@@ -229,37 +232,26 @@ p{color:var(--muted);line-height:1.6;margin:0}
   line-height:1.5;
   margin-top:8px;
 }
-.footer{
-  margin:32px 0 12px;
-  text-align:center;
-}
-.footer-title{
-  color:#183B67;
-  font-size:16px;
-  font-weight:800;
-}
-.footer-credit{
-  margin-top:6px;
-  color:#98A2B3;
-  font-size:12px;
-}
-.footer-heart{
-  display:inline-block;
-  animation:heartBeat 2s ease-in-out infinite;
-}
-@keyframes heartBeat{
-  0%{transform:scale(1);opacity:.75;}
-  50%{transform:scale(1.15);opacity:1;}
-  100%{transform:scale(1);opacity:.75;}
-}
+.footer{margin:32px 0 12px;text-align:center}
+.footer-title{color:#183B67;font-size:16px;font-weight:800}
+.footer-credit{margin-top:6px;color:#98A2B3;font-size:12px}
+.footer-heart{display:inline-block;animation:heartBeat 2s ease-in-out infinite}
+@keyframes heartBeat{0%{transform:scale(1);opacity:.75}50%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:.75}}
 
+
+.hero-logo{display:none}
+.hero-logo img{height:72px;width:auto;display:block;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(16,35,58,.10))}
+@media(max-width:760px){.hero-logo img{height:58px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <section class="hero">
-    <span class="kicker">🚗 Hatyai Car Rental</span>
-    <h1>K&K รถเช่าหาดใหญ่ 🩵</h1>
+    <div class="hero-logo">
+<img src="assets/images/KK-LOGO.jpg" alt="K&K รถเช่าหาดใหญ่">
+</div>
+<span class="kicker"><img src="assets/images/KK-LOGO.jpg" alt="logo">Hatyai Car Rental</span>
+    <h1>K&K รถเช่าหาดใหญ่ </h1>
     <p>บริการรถเช่าหาดใหญ่ ขับง่าย ประหยัดน้ำมัน เหมาะสำหรับเที่ยว ทำงาน รับ-ส่งสนามบิน และเดินทางในเมือง</p>
 
     <div class="primary-cta">
@@ -314,13 +306,8 @@ p{color:var(--muted);line-height:1.6;margin:0}
   </section>
 
   <div class="footer">
-    <div class="footer-title">
-        คิดถึงรถเช่า คิดถึงเรา K&K
-        <span class="footer-heart">🩵</span>
-    </div>
-    <div class="footer-credit">
-        Made by K&K รถเช่าหาดใหญ่
-    </div>
+<div class="footer-title">คิดถึงรถเช่า คิดถึงเรา K&K <span class="footer-heart">🩵</span></div>
+<div class="footer-credit">Made by K&K รถเช่าหาดใหญ่</div>
 </div>
 </div>
 
