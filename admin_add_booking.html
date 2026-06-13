@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin | K&K รถเช่าหาดใหญ่</title>
+<style>
+:root{
+  --ink:#10233A;
+  --muted:#667085;
+  --blue:#1D4F86;
+  --blue-2:#4B9BDA;
+  --yellow:#F2B544;
+  --red:#D9432F;
+  --green:#12B76A;
+  --card:rgba(255,255,255,.86);
+  --line:rgba(29,79,134,.16);
+  --shadow:0 18px 46px rgba(16,35,58,.10);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(29,79,134,.10),transparent 32%),
+    radial-gradient(circle at 92% 0%,rgba(75,155,218,.10),transparent 30%),
+    linear-gradient(180deg,#ffffff 0%,#f7f9fc 54%,#ffffff 100%);
+  padding:18px;
+}
+.wrap{max-width:1120px;margin:auto}
+.hero,.card{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,255,255,.90),rgba(248,251,255,.82));
+  border:1px solid var(--line);
+  border-radius:34px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  padding:24px;
+  margin:14px 0;
+}
+.hero::after,.card::after,.booking-card::after,.btn::after{
+  content:"";
+  position:absolute;
+  top:-90px;
+  left:-130px;
+  width:96px;
+  height:280px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.48),transparent);
+  transform:rotate(24deg);
+  transition:.55s ease;
+  pointer-events:none;
+}
+.hero:hover::after,.card:hover::after,.booking-card:hover::after,.btn:hover::after{left:112%}
+.back{
+  display:inline-flex;
+  text-decoration:none;
+  color:var(--blue);
+  font-weight:900;
+  margin-bottom:12px;
+  padding:10px 13px;
+  border-radius:999px;
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(29,79,134,.12);
+}
+.kicker{
+  display:inline-flex;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(29,79,134,.09);
+  color:var(--blue);
+  border:1px solid rgba(29,79,134,.12);
+  font-weight:900;
+  font-size:13px;
+}
+h1{font-size:36px;line-height:1.05;margin:16px 0 10px;letter-spacing:-.8px}
+h2{font-size:21px;margin:0 0 14px}
+p{color:var(--muted);line-height:1.6;margin:0}
+.toolbar{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:16px;
+}
+@media(min-width:760px){.toolbar{grid-template-columns:1fr 220px 150px 170px}}
+input,select{
+  width:100%;
+  border:1px solid rgba(29,79,134,.18);
+  border-radius:18px;
+  padding:13px 14px;
+  font-size:15px;
+  font-family:inherit;
+  background:rgba(255,255,255,.82);
+  color:var(--ink);
+  outline:none;
+}
+.btn{
+  position:relative;
+  overflow:hidden;
+  border:0;
+  min-height:48px;
+  cursor:pointer;
+  border-radius:999px;
+  padding:12px 16px;
+  font-weight:900;
+  font-size:15px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  color:#fff;
+  box-shadow:0 14px 30px rgba(29,79,134,.18);
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:16px;
+}
+@media(min-width:760px){.stats{grid-template-columns:repeat(5,1fr)}}
+.stat{
+  border-radius:22px;
+  padding:14px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(29,79,134,.12);
+}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:12px;color:var(--muted);font-weight:800}
+.table-wrap{overflow:auto;border-radius:24px;border:1px solid rgba(29,79,134,.12)}
+table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.70);min-width:900px}
+th,td{padding:13px 12px;text-align:left;border-bottom:1px solid rgba(29,79,134,.10);font-size:14px;vertical-align:top}
+th{color:var(--blue);font-size:12px;text-transform:uppercase;letter-spacing:.4px;background:rgba(29,79,134,.05)}
+td b{color:var(--ink)}
+.status-select{font-weight:900;border-radius:999px;padding:9px 12px}
+.status-wait{background:rgba(242,181,68,.16);border-color:rgba(242,181,68,.45)}
+.status-confirm{background:rgba(18,183,106,.12);border-color:rgba(18,183,106,.35)}
+.status-pickup{background:rgba(75,155,218,.14);border-color:rgba(75,155,218,.35)}
+.status-return{background:rgba(102,112,133,.10);border-color:rgba(102,112,133,.28)}
+.status-cancel{background:rgba(217,67,47,.10);border-color:rgba(217,67,47,.30)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.mini{
+  text-decoration:none;
+  color:var(--blue);
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(29,79,134,.14);
+  border-radius:999px;
+  padding:8px 10px;
+  font-weight:900;
+  font-size:12px;
+}
+.mobile-list{display:none}
+.booking-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(29,79,134,.12);
+  border-radius:26px;
+  padding:16px;
+  background:rgba(255,255,255,.78);
+  box-shadow:0 12px 30px rgba(16,35,58,.07);
+  margin-bottom:12px;
+}
+.booking-card:hover{border-color:rgba(242,181,68,.65)}
+.row{display:grid;grid-template-columns:95px 1fr;gap:8px;font-size:14px;margin-top:8px}
+.label{color:var(--muted);font-weight:800}
+.small{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5}
+.notice{
+  padding:13px 14px;
+  border-radius:18px;
+  background:rgba(242,181,68,.12);
+  border:1px solid rgba(242,181,68,.28);
+  color:#694100;
+  font-size:13px;
+  line-height:1.5;
+  margin-top:12px;
+}
+.edit-input,.edit-select{
+  width:100%;
+  min-width:118px;
+  border:1px solid rgba(29,79,134,.18);
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:13px;
+  font-family:inherit;
+  background:rgba(255,255,255,.82);
+  color:var(--ink);
+  outline:none;
+}
+.edit-input:focus,.edit-select:focus{
+  border-color:rgba(242,181,68,.65);
+  box-shadow:0 0 0 4px rgba(242,181,68,.10);
+  background:#fff;
+}
+.mini{
+  cursor:pointer;
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease;
+}
+.mini:hover{
+  transform:translateY(-2px) scale(1.04);
+  background:rgba(255,255,255,.94);
+  border-color:rgba(242,181,68,.70);
+  box-shadow:0 12px 24px rgba(16,35,58,.12);
+}
+.mini:active{transform:scale(.96)}
+.save-row{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  border-color:rgba(29,79,134,.18);
+  min-height:38px;
+}
+.save-row:hover{
+  color:#fff;
+  background:linear-gradient(135deg,#153A66,#2E77B5);
+  border-color:rgba(242,181,68,.85);
+}
+
+.add-panel{
+  display:none;
+  margin-top:16px;
+  padding:18px;
+  border-radius:26px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(29,79,134,.14);
+  box-shadow:0 12px 30px rgba(16,35,58,.07);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.add-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+@media(min-width:760px){
+  .add-grid{grid-template-columns:repeat(3,1fr)}
+}
+.add-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.btn.secondary{
+  color:var(--blue);
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(29,79,134,.16);
+  box-shadow:0 12px 26px rgba(16,35,58,.07);
+}
+.btn.red{
+  background:linear-gradient(135deg,var(--red),#F05B42);
+  box-shadow:0 14px 30px rgba(217,67,47,.20);
+}
+
+@media(max-width:760px){
+  .table-wrap{display:none}
+  .mobile-list{display:block}
+  .hero,.card{border-radius:28px;padding:20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← กลับหน้าแรก</a>
+
+  <section class="hero">
+    <span class="kicker">Admin Dashboard</span>
+    <h1>รายการจองรถ</h1>
+    <p>หน้านี้ใช้ดูรายการจองจาก Google Sheet และเปลี่ยนสถานะการจองได้ทันที</p>
+    <div class="notice">
+      หมายเหตุ: ถ้าใช้วิธีอ้างอิงเลขแถว ห้าม Sort แถวใน Google Sheet เองระหว่างใช้งานหน้านี้
+    </div>
+
+    <div class="toolbar">
+      <input id="searchInput" placeholder="ค้นหาชื่อ / เบอร์ / รถ / สถานที่" oninput="render()">
+      <select id="statusFilter" onchange="render()">
+        <option value="">ทุกสถานะ</option>
+        <option>รอคอนเฟิร์ม</option>
+        <option>ยืนยันแล้ว</option>
+        <option>รับรถแล้ว</option>
+        <option>คืนรถแล้ว</option>
+        <option>ยกเลิก</option>
+      </select>
+      <button class="btn" onclick="loadBookings()">รีเฟรชข้อมูล</button>
+      <button class="btn red" onclick="toggleAddPanel()">+ เพิ่มการจอง</button>
+    </div>
+
+
+    <div class="add-panel" id="addPanel">
+      <h2>เพิ่มการจองเอง</h2>
+      <p class="small">ใช้สำหรับรายการที่แม่รับจองจากโทรศัพท์ / LINE / หน้าร้าน</p>
+
+      <div class="add-grid">
+        <div>
+          <label>ชื่อลูกค้า</label>
+          <input class="edit-input" id="newName" placeholder="เช่น คุณลูกค้า">
+        </div>
+        <div>
+          <label>เบอร์โทร</label>
+          <input class="edit-input" id="newPhone" inputmode="tel" placeholder="08x-xxx-xxxx">
+        </div>
+        <div>
+          <label>LINE ID</label>
+          <input class="edit-input" id="newLineid" placeholder="ถ้ามี">
+        </div>
+
+        <div>
+          <label>รถ</label>
+          <select class="edit-select" id="newCar"></select>
+        </div>
+        <div>
+          <label>วันที่รับรถ</label>
+          <input class="edit-input" id="newPickupDate" type="date">
+        </div>
+        <div>
+          <label>วันที่คืนรถ</label>
+          <input class="edit-input" id="newReturnDate" type="date">
+        </div>
+
+        <div>
+          <label>สถานที่รับรถ</label>
+          <input class="edit-input" id="newLocation" placeholder="สนามบิน / ตัวเมือง / โรงแรม">
+        </div>
+        <div>
+          <label>ราคา</label>
+          <input class="edit-input" id="newPrice" placeholder="เช่น 2500">
+        </div>
+        <div>
+          <label>สถานะ</label>
+          <select class="edit-select" id="newStatus">
+            <option>รอคอนเฟิร์ม</option>
+            <option>ยืนยันแล้ว</option>
+            <option>รับรถแล้ว</option>
+            <option>คืนรถแล้ว</option>
+            <option>ยกเลิก</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="add-actions">
+        <button class="btn red" onclick="addBooking()">💾 บันทึกการจอง</button>
+        <button class="btn secondary" onclick="toggleAddPanel(false)">ยกเลิก</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b id="totalCount">0</b><span>ทั้งหมด</span></div>
+      <div class="stat"><b id="waitCount">0</b><span>รอคอนเฟิร์ม</span></div>
+      <div class="stat"><b id="confirmCount">0</b><span>ยืนยันแล้ว</span></div>
+      <div class="stat"><b id="pickupCount">0</b><span>รับรถแล้ว</span></div>
+      <div class="stat"><b id="returnCount">0</b><span>คืนรถแล้ว</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>ข้อมูลการจอง</h2>
+    <div class="small" id="statusText">กำลังโหลดข้อมูลจาก Google Sheet...</div>
+
+    <div class="table-wrap" style="margin-top:14px">
+      <table>
+        <thead>
+          <tr>
+            <th>ลูกค้า</th>
+            <th>รถ</th>
+            <th>วันรับ-คืน</th>
+            <th>สถานที่</th>
+            <th>ราคา</th>
+            <th>สถานะ</th>
+            <th>บันทึก</th>
+            <th>ติดต่อ</th>
+          </tr>
+        </thead>
+        <tbody id="bookingTable"></tbody>
+      </table>
+    </div>
+
+    <div class="mobile-list" id="bookingCards" style="margin-top:14px"></div>
+  </section>
+</div>
+
+<script>
+const SHEET_ID = "1Z6M8UH2wnzGYFUcKE-zpQFSGEV-FaAp8aOWr2FAyzQ4";
+const BOOKING_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Booking`;
+const CARS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Cars`;
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwFfHl2X6bOhvLZ-YonmVTaNaB1-XbLLmqs2ZPHMPRNu0sH2VYAQgOjedkPYkALProY/exec";
+
+let bookings = [];
+let cars = [];
+
+const STATUS_OPTIONS = ["รอคอนเฟิร์ม","ยืนยันแล้ว","รับรถแล้ว","คืนรถแล้ว","ยกเลิก"];
+
+function parseCSV(text){
+  const rows = [];
+  let row = [], cell = "", quote = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
+    if(c === '"' && quote && n === '"'){ cell += '"'; i++; }
+    else if(c === '"') quote = !quote;
+    else if(c === "," && !quote){ row.push(cell.trim()); cell = ""; }
+    else if((c === "\n" || c === "\r") && !quote){
+      if(cell || row.length){ row.push(cell.trim()); rows.push(row); row = []; cell = ""; }
+      if(c === "\r" && n === "\n") i++;
+    } else cell += c;
+  }
+  if(cell || row.length){ row.push(cell.trim()); rows.push(row); }
+  return rows;
+}
+
+function rowsToObjects(rows){
+  if(!rows.length) return [];
+  const headers = rows.shift().map(h => h.trim());
+  return rows.filter(r => r.some(x => x)).map((r,index) => {
+    const obj = {};
+    headers.forEach((h,i) => obj[h] = (r[i] || "").trim());
+    obj.__rowNumber = index + 2;
+    return obj;
+  });
+}
+
+function get(row, names){
+  for(const name of names){
+    if(row[name] !== undefined && row[name] !== "") return row[name];
+  }
+  return "";
+}
+
+function normalizeStatus(value){
+  return value || "รอคอนเฟิร์ม";
+}
+
+function statusClass(status){
+  if(status === "ยืนยันแล้ว") return "status-confirm";
+  if(status === "รับรถแล้ว") return "status-pickup";
+  if(status === "คืนรถแล้ว") return "status-return";
+  if(status === "ยกเลิก") return "status-cancel";
+  return "status-wait";
+}
+
+function lineLink(lineid){
+  if(!lineid) return "";
+  const clean = lineid.replace("@","");
+  return `https://line.me/ti/p/~${encodeURIComponent(clean)}`;
+}
+
+function optionHTML(current){
+  return STATUS_OPTIONS.map(s => `<option value="${s}" ${s === current ? "selected" : ""}>${s}</option>`).join("");
+}
+
+function carOptionHTML(current){
+  const names = cars.map(car => {
+    const display = get(car, ["Display Name","display_name"]);
+    if(display) return display;
+    const name = get(car, ["Car Name","car_name"]);
+    const year = get(car, ["Year","year"]);
+    return `${name} ${year}`.trim();
+  }).filter(Boolean);
+
+  if(current && !names.includes(current)) names.unshift(current);
+  return names.map(name => `<option value="${name}" ${name === current ? "selected" : ""}>${name}</option>`).join("");
+}
+
+function esc(value){
+  return String(value || "").replace(/"/g, "&quot;");
+}
+
+async function loadBookings(){
+  document.getElementById("statusText").textContent = "กำลังโหลดข้อมูลจาก Google Sheet...";
+  try{
+    const [bookingText, carsText] = await Promise.all([
+      fetch(BOOKING_URL + "&_=" + Date.now()).then(r => r.text()),
+      fetch(CARS_URL + "&_=" + Date.now()).then(r => r.text())
+    ]);
+
+    bookings = rowsToObjects(parseCSV(bookingText)).reverse();
+    cars = rowsToObjects(parseCSV(carsText)).filter(c => (get(c, ["Active","active"]) || "TRUE").toUpperCase() !== "FALSE");
+
+    document.getElementById("statusText").textContent = `โหลดข้อมูลสำเร็จ ${bookings.length} รายการ`;
+    render();
+  }catch(err){
+    console.error(err);
+    document.getElementById("statusText").textContent = "โหลดข้อมูลไม่สำเร็จ กรุณาเช็ก Google Sheet";
+  }
+}
+
+function filterBookings(){
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  const f = document.getElementById("statusFilter").value;
+  return bookings.filter(row => {
+    const status = normalizeStatus(get(row, ["Status","status","สถานะ"]));
+    const text = [
+      get(row, ["name","Name","ชื่อ","ชื่อ-นามสกุล"]),
+      get(row, ["phone","Phone","เบอร์โทร"]),
+      get(row, ["lineid","LINE ID","Line ID"]),
+      get(row, ["car","Car","รุ่นรถ","รุ่นรถที่สนใจ"]),
+      get(row, ["location","Location","สถานที่รับรถ"]),
+      get(row, ["note","Note","หมายเหตุ"])
+    ].join(" ").toLowerCase();
+    return (!q || text.includes(q)) && (!f || status === f);
+  });
+}
+
+function updateStats(){
+  const all = bookings;
+  const count = s => all.filter(row => normalizeStatus(get(row, ["Status","status","สถานะ"])) === s).length;
+  document.getElementById("totalCount").textContent = all.length;
+  document.getElementById("waitCount").textContent = count("รอคอนเฟิร์ม");
+  document.getElementById("confirmCount").textContent = count("ยืนยันแล้ว");
+  document.getElementById("pickupCount").textContent = count("รับรถแล้ว");
+  document.getElementById("returnCount").textContent = count("คืนรถแล้ว");
+}
+
+function render(){
+  updateStats();
+  const rows = filterBookings();
+  const tbody = document.getElementById("bookingTable");
+  const cards = document.getElementById("bookingCards");
+  tbody.innerHTML = "";
+  cards.innerHTML = "";
+
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="8">ไม่พบข้อมูล</td></tr>`;
+    cards.innerHTML = `<div class="small">ไม่พบข้อมูล</div>`;
+    return;
+  }
+
+  rows.forEach(row => {
+    const name = get(row, ["name","Name","ชื่อ","ชื่อ-นามสกุล"]) || "-";
+    const phone = get(row, ["phone","Phone","เบอร์โทร"]) || "-";
+    const lineid = get(row, ["lineid","LINE ID","Line ID"]) || "";
+    const car = get(row, ["car","Car","รุ่นรถ","รุ่นรถที่สนใจ"]) || "-";
+    const pickupDate = get(row, ["pickupDate","Pickup Date","วันที่รับรถ"]) || "";
+    const returnDate = get(row, ["returnDate","Return Date","วันที่คืนรถ"]) || "";
+    const pickupTime = get(row, ["pickupTime","Pickup Time","เวลารับรถ"]) || "-";
+    const returnTime = get(row, ["returnTime","Return Time","เวลาคืนรถ"]) || "-";
+    const location = get(row, ["location","Location","สถานที่","สถานที่รับรถ","Pickup Location","pickupLocation","pickup_location"]) || "";
+    const price = get(row, ["price","Price","ราคา"]) || "";
+    const note = get(row, ["note","Note","หมายเหตุ"]) || "-";
+    const status = normalizeStatus(get(row, ["Status","status","สถานะ"]));
+    const rowNumber = row.__rowNumber;
+
+    const contacts = `
+      <div class="actions">
+        ${phone !== "-" ? `<a class="mini" href="tel:${String(phone).replace(/[^0-9+]/g,"")}">โทร</a>` : ""}
+        ${lineid ? `<a class="mini" href="${lineLink(lineid)}" target="_blank">LINE</a>` : ""}
+      </div>`;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><b>${name}</b><div class="small">${phone}${lineid ? " · LINE: " + lineid : ""}</div></td>
+      <td>
+        <select id="car_${rowNumber}" class="edit-select">${carOptionHTML(car)}</select>
+        <div class="small">${note}</div>
+      </td>
+      <td>
+        <input class="edit-input" id="pickup_${rowNumber}" type="date" value="${esc(pickupDate)}">
+        <div style="height:6px"></div>
+        <input class="edit-input" id="return_${rowNumber}" type="date" value="${esc(returnDate)}">
+        <div class="small">${pickupTime} ถึง ${returnTime}</div>
+      </td>
+      <td><input class="edit-input" id="location_${rowNumber}" value="${esc(location)}" placeholder="สถานที่รับรถ"></td>
+      <td><input class="edit-input" id="price_${rowNumber}" value="${esc(price)}" placeholder="ราคา"></td>
+      <td>
+        <select id="status_${rowNumber}" class="edit-select status-select ${statusClass(status)}">
+          ${optionHTML(status)}
+        </select>
+      </td>
+      <td><button class="mini save-row" onclick="updateBooking(${rowNumber})">💾 บันทึก</button></td>
+      <td>${contacts}</td>
+    `;
+    tbody.appendChild(tr);
+
+    const card = document.createElement("div");
+    card.className = "booking-card";
+    card.innerHTML = `
+      <b>${name}</b>
+      <div class="row"><div class="label">รถ</div><div><select id="mcar_${rowNumber}" class="edit-select">${carOptionHTML(car)}</select></div></div>
+      <div class="row"><div class="label">วันรับ</div><div><input class="edit-input" id="mpickup_${rowNumber}" type="date" value="${esc(pickupDate)}"></div></div>
+      <div class="row"><div class="label">วันคืน</div><div><input class="edit-input" id="mreturn_${rowNumber}" type="date" value="${esc(returnDate)}"></div></div>
+      <div class="row"><div class="label">สถานที่</div><div><input class="edit-input" id="mlocation_${rowNumber}" value="${esc(location)}" placeholder="สถานที่รับรถ"></div></div>
+      <div class="row"><div class="label">ราคา</div><div><input class="edit-input" id="mprice_${rowNumber}" value="${esc(price)}" placeholder="ราคา"></div></div>
+      <div class="row"><div class="label">สถานะ</div><div><select id="mstatus_${rowNumber}" class="edit-select status-select ${statusClass(status)}">${optionHTML(status)}</select></div></div>
+      <div class="row"><div class="label">หมายเหตุ</div><div>${note}</div></div>
+      <div style="margin-top:12px"><button class="mini save-row" onclick="updateBooking(${rowNumber},true)">💾 บันทึกแถวนี้</button></div>
+      <div style="margin-top:12px">${contacts}</div>
+    `;
+    cards.appendChild(card);
+  });
+}
+
+async function updateStatusasync function updateStatus(rowNumber, status, selectEl){
+  const oldText = document.getElementById("statusText").textContent;
+  document.getElementById("statusText").textContent = "กำลังอัปเดตสถานะ...";
+
+  selectEl.className = "status-select " + statusClass(status);
+
+  const formData = new URLSearchParams();
+  formData.append("action", "updateStatus");
+  formData.append("rowNumber", rowNumber);
+  formData.append("status", status);
+
+  try{
+    await fetch(WEB_APP_URL, {
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+      body:formData.toString()
+    });
+
+    const item = bookings.find(b => b.__rowNumber === rowNumber);
+    if(item){
+      if(item["Status"] !== undefined) item["Status"] = status;
+      else if(item["status"] !== undefined) item["status"] = status;
+      else item["Status"] = status;
+    }
+
+    document.getElementById("statusText").textContent = `อัปเดตสถานะเป็น "${status}" แล้ว`;
+    render();
+  }catch(err){
+    console.error(err);
+    document.getElementById("statusText").textContent = oldText || "อัปเดตไม่สำเร็จ";
+    alert("อัปเดตสถานะไม่สำเร็จ กรุณาลองอีกครั้ง");
+  }
+}
+
+async function updateBooking(rowNumber,mobile=false){
+  const prefix = mobile ? "m" : "";
+  const car = document.getElementById(prefix + "car_" + rowNumber).value;
+  const pickupDate = document.getElementById(prefix + "pickup_" + rowNumber).value;
+  const returnDate = document.getElementById(prefix + "return_" + rowNumber).value;
+  const location = document.getElementById(prefix + "location_" + rowNumber).value;
+  const price = document.getElementById(prefix + "price_" + rowNumber).value;
+  const status = document.getElementById(prefix + "status_" + rowNumber).value;
+
+  if(returnDate && pickupDate && new Date(returnDate) < new Date(pickupDate)){
+    alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ");
+    return;
+  }
+
+  document.getElementById("statusText").textContent = "กำลังบันทึกการเปลี่ยนแปลง...";
+
+  const formData = new URLSearchParams();
+  formData.append("action","updateBooking");
+  formData.append("rowNumber",rowNumber);
+  formData.append("car",car);
+  formData.append("pickupDate",pickupDate);
+  formData.append("returnDate",returnDate);
+  formData.append("location",location);
+  formData.append("price",price);
+  formData.append("status",status);
+
+  try{
+    await fetch(WEB_APP_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+      body:formData.toString()
+    });
+
+    document.getElementById("statusText").textContent = "บันทึกการเปลี่ยนแปลงเรียบร้อย";
+    await loadBookings();
+  }catch(err){
+    console.error(err);
+    document.getElementById("statusText").textContent = "บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง";
+    alert("บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง");
+  }
+}
+
+function fillNewCarOptions(){
+  const select = document.getElementById("newCar");
+  if(!select) return;
+  const names = cars.map(car => {
+    const display = get(car, ["Display Name","display_name"]);
+    if(display) return display;
+    const name = get(car, ["Car Name","car_name"]);
+    const year = get(car, ["Year","year"]);
+    return `${name} ${year}`.trim();
+  }).filter(Boolean);
+
+  select.innerHTML = `<option value="">เลือกรถ</option>` + names.map(name => `<option value="${name}">${name}</option>`).join("");
+}
+
+function toggleAddPanel(force){
+  const panel = document.getElementById("addPanel");
+  const show = typeof force === "boolean" ? force : panel.style.display !== "block";
+  panel.style.display = show ? "block" : "none";
+
+  if(show){
+    fillNewCarOptions();
+    const today = new Date().toISOString().split("T")[0];
+    if(!document.getElementById("newPickupDate").value) document.getElementById("newPickupDate").value = today;
+    if(!document.getElementById("newReturnDate").value) document.getElementById("newReturnDate").value = today;
+    panel.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
+function clearAddForm(){
+  ["newName","newPhone","newLineid","newPickupDate","newReturnDate","newLocation","newPrice"].forEach(id => {
+    const input = document.getElementById(id);
+    if(input) input.value = "";
+  });
+  document.getElementById("newCar").value = "";
+  document.getElementById("newStatus").value = "รอคอนเฟิร์ม";
+}
+
+async function addBooking(){
+  const name = document.getElementById("newName").value.trim();
+  const phone = document.getElementById("newPhone").value.trim();
+  const lineid = document.getElementById("newLineid").value.trim();
+  const car = document.getElementById("newCar").value;
+  const pickupDate = document.getElementById("newPickupDate").value;
+  const returnDate = document.getElementById("newReturnDate").value;
+  const location = document.getElementById("newLocation").value.trim();
+  const price = document.getElementById("newPrice").value.trim();
+  const status = document.getElementById("newStatus").value;
+
+  if(!name || !phone || !car || !pickupDate || !returnDate){
+    alert("กรอกชื่อ เบอร์ รถ วันที่รับ และวันที่คืนก่อนนะคะ");
+    return;
+  }
+
+  if(new Date(returnDate) < new Date(pickupDate)){
+    alert("วันที่คืนรถต้องไม่ก่อนวันที่รับรถนะคะ");
+    return;
+  }
+
+  document.getElementById("statusText").textContent = "กำลังเพิ่มการจอง...";
+
+  const formData = new URLSearchParams();
+  formData.append("name", name);
+  formData.append("phone", phone);
+  formData.append("lineid", lineid);
+  formData.append("car", car);
+  formData.append("pickupDate", pickupDate);
+  formData.append("returnDate", returnDate);
+  formData.append("location", location);
+  formData.append("price", price);
+  formData.append("status", status);
+
+  try{
+    await fetch(WEB_APP_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+      body:formData.toString()
+    });
+
+    document.getElementById("statusText").textContent = "เพิ่มการจองเรียบร้อย";
+    clearAddForm();
+    toggleAddPanel(false);
+    await loadBookings();
+  }catch(err){
+    console.error(err);
+    document.getElementById("statusText").textContent = "เพิ่มการจองไม่สำเร็จ กรุณาลองอีกครั้ง";
+    alert("เพิ่มการจองไม่สำเร็จ กรุณาลองอีกครั้ง");
+  }
+}
+
+loadBookings();
+</script>
+</body>
+</html>
