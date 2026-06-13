@@ -656,7 +656,7 @@ function render(){
           ${optionHTML(status)}
         </select>
       </td>
-      <td><button class="mini save-row" onclick="updateBooking(${rowNumber})">💾 บันทึก</button></td>
+      <td><button class="mini save-row" onclick="updateBooking(${rowNumber})">💾 บันทึก</button> <button class="mini" style="background:#fee4e2;color:#b42318" onclick="cancelBooking(${rowNumber})">🗑 ยกเลิก</button></td>
       <td>${contacts}</td>
     `;
     tbody.appendChild(tr);
@@ -672,7 +672,7 @@ function render(){
       <div class="row"><div class="label">ราคา</div><div><input class="edit-input" id="mprice_${rowNumber}" value="${esc(price)}" placeholder="ราคา"></div></div>
       <div class="row"><div class="label">สถานะ</div><div><select id="mstatus_${rowNumber}" class="edit-select status-select ${statusClass(status)}">${optionHTML(status)}</select></div></div>
       <div class="row"><div class="label">หมายเหตุ</div><div>${note}</div></div>
-      <div style="margin-top:12px"><button class="mini save-row" onclick="updateBooking(${rowNumber},true)">💾 บันทึกแถวนี้</button></div>
+      <div style="margin-top:12px"><button class="mini save-row" onclick="updateBooking(${rowNumber},true)">💾 บันทึกแถวนี้</button> <button class="mini" style="background:#fee4e2;color:#b42318" onclick="cancelBooking(${rowNumber})">🗑 ยกเลิก</button></div>
       <div style="margin-top:12px">${contacts}</div>
     `;
     cards.appendChild(card);
@@ -752,7 +752,32 @@ async function updateBooking(rowNumber,mobile=false){
     });
 
     document.getElementById("statusText").textContent = "บันทึกการเปลี่ยนแปลงเรียบร้อย";
+    await 
+async function cancelBooking(rowNumber){
+  if(!confirm("ยืนยันการยกเลิกการจองใช่ไหม?")) return;
+
+  const formData=new URLSearchParams();
+  formData.append("action","updateStatus");
+  formData.append("rowNumber",rowNumber);
+  formData.append("status","ยกเลิก");
+
+  document.getElementById("statusText").textContent="กำลังยกเลิกการจอง...";
+
+  try{
+    await fetch(WEB_APP_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+      body:formData.toString()
+    });
+    document.getElementById("statusText").textContent="ยกเลิกการจองเรียบร้อย";
     await loadBookings();
+  }catch(e){
+    alert("ยกเลิกไม่สำเร็จ");
+  }
+}
+
+loadBookings();
   }catch(err){
     console.error(err);
     document.getElementById("statusText").textContent = "บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง";
