@@ -6,6 +6,7 @@
 <title>K&K รถเช่าหาดใหญ่</title>
 <style>
 
+
 :root{
   --ink:#10233A;
   --muted:#667085;
@@ -236,13 +237,37 @@ p{color:var(--muted);line-height:1.6;margin:0}
   margin:30px 0 10px;
 }
 
+
+.hero-logo{
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+}
+.hero-logo img{
+  display:block;
+  height:74px;
+  width:auto;
+  max-width:210px;
+  object-fit:contain;
+  filter:drop-shadow(0 10px 24px rgba(16,35,58,.10));
+}
+@media(max-width:760px){
+  .hero-logo img{
+    height:58px;
+    max-width:180px;
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <section class="hero">
+    <div class="hero-logo">
+      <img src="assets/images/KK-LOGO.jpg" alt="K&K รถเช่าหาดใหญ่">
+    </div>
     <span class="kicker">🚗 Hatyai Car Rental</span>
-    <h1>K&K รถเช่าหาดใหญ่ 🩵</h1>
+    <h1>K&K รถเช่าหาดใหญ่</h1>
     <p>บริการรถเช่าหาดใหญ่ ขับง่าย ประหยัดน้ำมัน เหมาะสำหรับเที่ยว ทำงาน รับ-ส่งสนามบิน และเดินทางในเมือง</p>
 
     <div class="primary-cta">
@@ -295,8 +320,6 @@ p{color:var(--muted);line-height:1.6;margin:0}
     <div class="item"><b>Tel:</b> 094-984-4525</div>
     <div class="item"><b>Facebook:</b> K&K รถเช่าหาดใหญ่</div>
   </section>
-
-  <div class="footer">K&K รถเช่าหาดใหญ่</div>
 </div>
 
 <script>
