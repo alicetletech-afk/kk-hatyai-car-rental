@@ -84,7 +84,7 @@ p{color:var(--muted);line-height:1.6;margin:0}
   gap:10px;
   margin-top:16px;
 }
-@media(min-width:760px){.toolbar{grid-template-columns:1fr 220px 150px 170px 170px}}
+@media(min-width:760px){.toolbar{grid-template-columns:1fr 220px 150px 170px}}
 input,select{
   width:100%;
   border:1px solid rgba(29,79,134,.18);
@@ -314,41 +314,6 @@ body.locked .wrap{
   user-select:none;
 }
 
-
-.price-wrap{
-  position:relative;
-  min-width:120px;
-}
-.price-prefix{
-  position:absolute;
-  left:12px;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--blue);
-  font-weight:950;
-  pointer-events:none;
-  z-index:1;
-}
-.price-input{
-  padding-left:30px !important;
-}
-
-
-.csv-upload{
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-}
-.csv-upload input{
-  position:absolute;
-  inset:0;
-  opacity:0;
-  cursor:pointer;
-}
-
 </style>
 </head>
 <body class="locked">
@@ -410,10 +375,6 @@ body.locked .wrap{
       </select>
       <button class="btn" onclick="loadBookings()">รีเฟรชข้อมูล</button>
       <a class="btn red" href="https://alicetletech-afk.github.io/kk-hatyai-car-rental/admin-booking.html" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">+ เพิ่มการจอง</a>
-      <label class="btn csv-upload" style="background:linear-gradient(135deg,#12B76A,#16C47F);box-shadow:0 14px 30px rgba(18,183,106,.20);">
-        Import CSV
-        <input type="file" accept=".csv,text/csv" onchange="importCSVFile(event)">
-      </label>
     </div>
 
     <div class="stats">
@@ -595,15 +556,6 @@ function esc(value){
   return String(value || "").replace(/"/g, "&quot;");
 }
 
-function cleanPrice(value){
-  return String(value || "")
-    .replace(/฿/g, "")
-    .replace(/THB/gi, "")
-    .replace(/บาท/g, "")
-    .replace(/\/วัน/g, "")
-    .trim();
-}
-
 async function loadBookings(){
   document.getElementById("statusText").textContent = "กำลังโหลดข้อมูลจาก Google Sheet...";
   try{
@@ -701,12 +653,7 @@ function render(){
         <div class="small">${pickupTime} ถึง ${returnTime}</div>
       </td>
       <td><input class="edit-input" id="location_${rowNumber}" value="${esc(location)}" placeholder="สถานที่รับรถ"></td>
-      <td>
-        <div class="price-wrap">
-          <span class="price-prefix">฿</span>
-          <input class="edit-input price-input" id="price_${rowNumber}" value="${esc(cleanPrice(price))}" placeholder="0">
-        </div>
-      </td>
+      <td><input class="edit-input" id="price_${rowNumber}" value="${esc(price)}" placeholder="ราคา"></td>
       <td>
         <select id="status_${rowNumber}" class="edit-select status-select ${statusClass(status)}">
           ${optionHTML(status)}
@@ -725,12 +672,7 @@ function render(){
       <div class="row"><div class="label">วันรับ</div><div><input class="edit-input" id="mpickup_${rowNumber}" type="date" value="${esc(pickupDate)}"></div></div>
       <div class="row"><div class="label">วันคืน</div><div><input class="edit-input" id="mreturn_${rowNumber}" type="date" value="${esc(returnDate)}"></div></div>
       <div class="row"><div class="label">สถานที่</div><div><input class="edit-input" id="mlocation_${rowNumber}" value="${esc(location)}" placeholder="สถานที่รับรถ"></div></div>
-      <div class="row"><div class="label">ราคา</div><div>
-        <div class="price-wrap">
-          <span class="price-prefix">฿</span>
-          <input class="edit-input price-input" id="mprice_${rowNumber}" value="${esc(cleanPrice(price))}" placeholder="0">
-        </div>
-      </div></div>
+      <div class="row"><div class="label">ราคา</div><div><input class="edit-input" id="mprice_${rowNumber}" value="${esc(price)}" placeholder="ราคา"></div></div>
       <div class="row"><div class="label">สถานะ</div><div><select id="mstatus_${rowNumber}" class="edit-select status-select ${statusClass(status)}">${optionHTML(status)}</select></div></div>
       <div class="row"><div class="label">หมายเหตุ</div><div>${note}</div></div>
       <div style="margin-top:12px"><button class="mini save-row" onclick="updateBooking(${rowNumber},true)">💾 บันทึกแถวนี้</button></div>
@@ -784,7 +726,7 @@ async function updateBooking(rowNumber,mobile=false){
   const pickupDate = document.getElementById(prefix + "pickup_" + rowNumber).value;
   const returnDate = document.getElementById(prefix + "return_" + rowNumber).value;
   const location = document.getElementById(prefix + "location_" + rowNumber).value;
-  const price = cleanPrice(document.getElementById(prefix + "price_" + rowNumber).value);
+  const price = document.getElementById(prefix + "price_" + rowNumber).value;
   const status = document.getElementById(prefix + "status_" + rowNumber).value;
 
   if(returnDate && pickupDate && new Date(returnDate) < new Date(pickupDate)){
@@ -819,28 +761,6 @@ async function updateBooking(rowNumber,mobile=false){
     document.getElementById("statusText").textContent = "บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง";
     alert("บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง");
   }
-}
-
-
-function importCSVFile(event){
-  const file = event.target.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(){
-    try{
-      const text = reader.result;
-      bookings = rowsToObjects(parseCSV(text)).reverse();
-
-      document.getElementById("statusText").textContent = `นำเข้า CSV สำเร็จ ${bookings.length} รายการ`;
-      render();
-    }catch(err){
-      console.error(err);
-      alert("อ่านไฟล์ CSV ไม่สำเร็จ กรุณาตรวจสอบไฟล์อีกครั้ง");
-    }
-  };
-  reader.readAsText(file, "UTF-8");
-  event.target.value = "";
 }
 
 loadBookings();
