@@ -172,7 +172,7 @@ async function loadAll(){
     bookings = rowsToObjects(parseCSV(bookingText));
 
     document.getElementById("sheetStatus").textContent =
-      `โหลดข้อมูลสำเร็จ: รถ ${cars.length} คัน / บล็อกรถ ${manualBlocks.length} รายการ / Booking ${bookings.length} รายการ`;
+      ``;
   }catch(err){
     console.error(err);
     document.getElementById("sheetStatus").textContent =
