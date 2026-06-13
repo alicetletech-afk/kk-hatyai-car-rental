@@ -7,7 +7,7 @@
 <style>
 :root{--ink:#172033;--muted:#667085;--blue:#2f6bff;--cyan:#72d7ff;--card:rgba(255,255,255,.88);--line:rgba(135,158,205,.24);--shadow:0 18px 46px rgba(31,77,150,.12)}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 8%,rgba(114,215,255,.36),transparent 30%),radial-gradient(circle at 90% 0%,rgba(47,107,255,.20),transparent 35%),linear-gradient(180deg,#eef6ff 0%,#ffffff 100%);padding:18px}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 8%,rgba(114,215,255,.36),transparent 30%),radial-gradient(circle at 90% 0%,rgba(47,107,255,.20),transparent 35%),linear-gradient(180deg,#eef6ff 0%,#fff 100%);padding:18px}
 .wrap{max-width:820px;margin:auto}
 .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px;margin:14px 0}
 .kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(47,107,255,.10);color:#2457d6;font-weight:800;font-size:13px}
@@ -43,7 +43,6 @@ textarea{min-height:100px;resize:vertical}
 
   <section class="card">
     <h2>ข้อมูลการจอง</h2>
-
     <form id="bookingForm">
       <label>ชื่อ-นามสกุล</label>
       <input id="customerName" required placeholder="เช่น คุณกอกอล์">
@@ -112,7 +111,6 @@ function validateDates(showAlert = true){
   const pickupDate = el("pickupDate").value;
   const returnDate = el("returnDate").value;
   const status = el("statusText");
-
   status.classList.remove("error");
   status.textContent = "";
 
@@ -142,8 +140,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     });
     if(!found){
-      const option = new Option(selectedCar, selectedCar, true, true);
-      select.add(option);
+      select.add(new Option(selectedCar, selectedCar, true, true));
     }
   }
 
@@ -156,7 +153,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
 el("bookingForm").addEventListener("submit", async function(event){
   event.preventDefault();
-
   if(!validateDates(true)) return;
 
   const data = {
@@ -202,20 +198,22 @@ LINE ID: ${data.lineid || "-"}
   el("statusText").classList.remove("error");
   el("statusText").textContent = "กำลังส่งข้อมูลเข้า Google Sheet...";
 
+  const formData = new URLSearchParams();
+  Object.keys(data).forEach(key => formData.append(key, data[key]));
+
   try {
     await fetch(WEB_APP_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(data)
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: formData.toString()
     });
 
-    el("statusText").textContent = "บันทึกข้อมูลแล้ว กำลังเปิด LINE...";
+    el("statusText").textContent = "ส่งข้อมูลแล้ว กำลังเปิด LINE...";
     setTimeout(() => {
       window.location.href = lineUrl;
     }, 700);
-
-  } catch (error) {
+  } catch(error) {
     console.error(error);
     el("statusText").classList.add("error");
     el("statusText").textContent = "ส่งข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง หรือกดเปิด LINE ด้านล่าง";
