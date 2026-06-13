@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>กอกอล์ รถเช่าหาดใหญ่ | K&K รถเช่าหาดใหญ่</title>
+<title>K&K รถเช่าหาดใหญ่</title>
 <style>
 :root{
   --ink:#172033;
@@ -174,7 +174,7 @@ p{color:var(--muted);line-height:1.6;margin:0}
 <div class="wrap">
   <section class="hero">
     <span class="kicker">🚗 Hatyai Car Rental</span>
-    <h1>กอกอล์ รถเช่าหาดใหญ่ 🩵</h1>
+    <h1>K&K รถเช่าหาดใหญ่ 🩵</h1>
     <p>บริการรถเช่าหาดใหญ่ ขับง่าย ประหยัดน้ำมัน เหมาะสำหรับเที่ยว ทำงาน รับ-ส่งสนามบิน และเดินทางในเมือง</p>
 
     <div class="primary-cta">
@@ -202,6 +202,7 @@ p{color:var(--muted);line-height:1.6;margin:0}
 
   <section class="card">
     <h2>🚘 รถที่มีให้บริการ</h2>
+    <div id="carStatus" style="display:none"></div>
     <div class="grid three" id="fleetGrid" style="margin-top:14px"></div>
   </section>
 
@@ -292,6 +293,7 @@ function sortNo(car){
 }
 
 async function initFleet(){
+  const status = document.getElementById("carStatus");
   const grid = document.getElementById("fleetGrid");
 
   try {
@@ -301,6 +303,7 @@ async function initFleet(){
       .sort((a,b) => sortNo(a) - sortNo(b));
 
     grid.innerHTML = "";
+    
     cars.forEach(car => {
       const name = carName(car);
       const desc = carDesc(car);
@@ -321,6 +324,7 @@ async function initFleet(){
     });
   } catch(err) {
     console.error(err);
+    console.error("โหลดรายชื่อรถไม่สำเร็จ");
   }
 }
 
